@@ -13,7 +13,12 @@
         }
     ],
     "require": {
-        "phpixie/slice": "3.*@dev"
+        "phpixie/http-processors": "3.*@dev",
+        "phpixie/template": "3.*@dev",
+        "phpixie/slice": "3.*@dev",
+        "phpixie/processors": "3.*@dev",
+        "phpixie/http": "3.*@dev",
+        "psr/http-message": "1.*@dev"
     },
     "require-dev": {
         "phpixie/test": "3.*@dev"
