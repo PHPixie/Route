@@ -2,7 +2,7 @@
 
 namespace PHPixie\Router;
 
-class Target
+class Path
 {
     protected $generator;
     protected $name;
