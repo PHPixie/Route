@@ -1,5 +1,7 @@
 <?php
 
+namespace PHPixie\Router;
+
 class Routes
 {
     protected $configData;
@@ -60,4 +62,7 @@ class Routes
         
         return $route->generateUri($path, $attributes);
     }
+    
+    public function buildRoute($configData)
+    {}
 }
