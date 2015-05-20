@@ -11,11 +11,10 @@ class Pattern
     protected $regex;
     protected $parameterNames = array();
     
-    public function __construct($pattern, $attributePatterns, $defaults)
+    public function __construct($pattern, $attributePatterns)
     {
         $this->pattern           = $pattern;
         $this->attributePatterns = $attributePatterns;
-        $this->defaults          = $defaults;
     }
     
     protected function prepareRegex()

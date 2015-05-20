@@ -2,44 +2,70 @@
 
 class Group extends Pattern
 {
+    public function match()
+    {
+        if(!$this->isMethodValid($fragment)) {
+            return null;
+        }
+        
+        list($attributes, $host) = $this->matchPattern($this->hostPattern(), $fragment->host());
+        if($attributes === null) {
+            return null;
+        }
+        
+        list($pathAttributes, $path) = $this->matchPattern($this->pathPattern(), $fragment->path());
+        if($pathAttributes === null) {
+            return null;
+        }
+        
+        $attributes = array_merge($attributes, $pathAttributes);
+        
+        $fragment = $fragment->copy($host, $path);
+        
+        if(($match = $this->routes()->match($fragment)) !== null) {
+            $match->prepend(null, $attributes);
+        }
+        
+        return $match;
+    }
+    
+    protected function matchPattern($pattern, $string)
+    {
+        if($pattern === null) {
+            return array(array(), $string);
+        }
+        
+        if(($matches = $this->matchPatternRegex($pattern, $path)) === null) {
+            return array(null, null);
+        }
+            
+        $tail = array_pop($matches);
+        $attributes = $pattern->mapMatches($matches);
+        return array($attributes, $tail);
+    }
+    
     protected function prepareRegex($regex)
     {
         return "#^$regex$#";
     }
     
-    protected function mapAttributes($pattern, $attributes)
+    public function generate($match, $withHost = false)
     {
-        $attributes = $this->pattern->applyAttributes($attributes);
-        return $attributes;
-    }
-    
-    public function generatePath($path, $attributes)
-    {
-        $path = $this->routes()->generatePath($path, $attributes);
+        $fragment = $this->routes()->generate($match, $withHost);
         
         if(($pathPattern = $this->pathPattern()) !== null) {
-            $path = $this->prefix($pathPattern, $uri->getPath());
-            $uri = $uri->withPath($path);
+            $path = $this->prefix($pathPattern, $fragment->path());
+            $fragment->setPath($path);
         }
+        
+        if($withHost && ($hostPattern = $this->hostPattern()) !== null) {
+            $host = $this->prefix($hostPattern, $fragment->host());
+            $fragment->setHost($host);
+        }
+        
+        return $fragment;
     }
-    
-    public function generateUri($uri, $path, $attributes)
-    {
-        $uri = $this->routes()->generateUri($uri, $path, $attributes);
         
-        if(($pathPattern = $this->pathPattern()) !== null) {
-            $path = $this->prefix($pathPattern, $uri->getPath());
-            $uri  = $uri->withPath($path);
-        }
-        
-        if(($hostPattern = $this->hostPattern()) !== null) {
-            $host = $this->prefix($hostPattern, $uri->getHost());
-            $uri  = $uri->withHost($host);
-        }
-        
-        return $uri;
-    }
-    
     protected function prefix($pattern, $string)
     {
         $prefix = $pathPattern->generate($attributes);
