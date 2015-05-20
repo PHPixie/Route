@@ -1,6 +1,6 @@
 <?php
 
-namespace PHPixie\HTTPProcessors\Processor\AttributeParser;
+namespace PHPixie\Router\Matcher;
 
 class Pattern
 {

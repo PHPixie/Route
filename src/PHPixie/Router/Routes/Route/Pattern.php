@@ -1,6 +1,8 @@
 <?php
 
-class Pattern implements \PHPixie\Router\Routes\Route
+namespace PHPixie\Router\Routes\Route;
+
+abstract class Pattern implements \PHPixie\Router\Routes\Route
 {
     protected $builder;
     protected $configData;
@@ -46,9 +48,9 @@ class Pattern implements \PHPixie\Router\Routes\Route
     {
         $key = $name.'Pattern';
         if(!array_key_exists($key, $this->processed)) {
-            $pattern = $config->get($name, null);
+            $pattern = $this->configData->get($name, null);
             if($pattern !== null) {
-                $pattern = $this->builder->pattern(
+                $pattern = $this->builder->matcherPattern(
                     $pattern,
                     $defaultAttributePattern,
                     $this->attributePatterns()
@@ -70,15 +72,6 @@ class Pattern implements \PHPixie\Router\Routes\Route
         return $this->processed[$key];
     }
     
-    public function match($segment)
-    {
-        if(!$this->isMethodValid($fragment)) {
-            return null;
-        }
-        
-        $this->matchPattern($this->hostPattern(), $segment->
-    }
-    
     protected function isMethodValid($fragment)
     {
         $methods = $this->methods();
@@ -90,21 +83,7 @@ class Pattern implements \PHPixie\Router\Routes\Route
         return in_array($method, $methods, true);
     }
     
-    protected function matchPatternRegex($pattern, $string)
-    {
-        if($pattern === null) {
-            return array();
-        }
-        
-        $regex = $pattern->regex();
-        $regex = $this->prepareRegex($regex);
-        if(preg_match($regex, $string, $matches) !== 1) {
-            return null;
-        }
-        
-        array_shift($matches);
-        return $matches;
-    }
+
     
     abstract public function generate($match, $withHost = false);
 }

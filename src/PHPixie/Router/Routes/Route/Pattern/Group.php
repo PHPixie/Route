@@ -8,17 +8,29 @@ class Group extends Pattern
             return null;
         }
         
-        list($attributes, $host) = $this->matchPattern($this->hostPattern(), $fragment->host());
-        if($attributes === null) {
+        list($hostAttributes, $host) = $this->matchPattern(
+            $this->hostPattern(),
+            $fragment->host()
+        );
+        
+        if($hostAttributes === null) {
             return null;
         }
         
-        list($pathAttributes, $path) = $this->matchPattern($this->pathPattern(), $fragment->path());
+        list($pathAttributes, $path) = $this->matchPattern(
+            $this->pathPattern(),
+            $fragment->path()
+        );
+        
         if($pathAttributes === null) {
             return null;
         }
         
-        $attributes = array_merge($attributes, $pathAttributes);
+        $attributes = array_merge(
+            $this->defaults(),
+            $hostAttributes,
+            $pathAttributes
+        );
         
         $fragment = $fragment->copy($host, $path);
         
@@ -35,31 +47,21 @@ class Group extends Pattern
             return array(array(), $string);
         }
         
-        if(($matches = $this->matchPatternRegex($pattern, $path)) === null) {
-            return array(null, null);
-        }
-            
-        $tail = array_pop($matches);
-        $attributes = $pattern->mapMatches($matches);
-        return array($attributes, $tail);
+        return $this->matcher->matchPrefix($pattern, $string);
     }
-    
-    protected function prepareRegex($regex)
-    {
-        return "#^$regex$#";
-    }
-    
+
     public function generate($match, $withHost = false)
     {
         $fragment = $this->routes()->generate($match, $withHost);
+        $attributes = $match->attributes();
         
         if(($pathPattern = $this->pathPattern()) !== null) {
-            $path = $this->prefix($pathPattern, $fragment->path());
+            $path = $this->prefix($pathPattern, $attributes, $fragment->path());
             $fragment->setPath($path);
         }
         
         if($withHost && ($hostPattern = $this->hostPattern()) !== null) {
-            $host = $this->prefix($hostPattern, $fragment->host());
+            $host = $this->prefix($hostPattern, $attributes, $fragment->host());
             $fragment->setHost($host);
         }
         

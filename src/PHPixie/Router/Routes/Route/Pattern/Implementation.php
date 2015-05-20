@@ -1,24 +1,38 @@
 <?php
 
-class Leaf extends Pattern
+namespace PHPixie\Router\Routes\Route\Pattern;
+
+class Implementation extends \PHPixie\Router\Routes\Route\Pattern
 {
-    public function match()
+    public function match($segment)
     {
         if(!$this->isMethodValid($fragment)) {
             return null;
         }
         
-        $attributes = $this->matchPattern($this->hostPattern(), $fragment->getHost());
-        if($attributes === null) {
+        $hostAttributes = $this->matchPattern(
+            $this->hostPattern(),
+            $fragment->getHost()
+        );
+        
+        if($hostAttributes === null) {
             return null;
         }
             
-        $pathAttributes = $this->matchPattern($this->pathPattern(), $fragment->getPath());
+        $pathAttributes = $this->matchPattern(
+            $this->pathPattern(),
+            $fragment->getPath()
+        );
+        
         if($pathAttributes === null) {
             return null;
         }
         
-        $attributes = array_merge($attributes, $pathAttributes);
+        $attributes = array_merge(
+            $this->defaults(),
+            $hostAttributes,
+            $pathAttributes
+        );
         
         return $this->builder->translatorMatch($attributes);
     }
@@ -29,16 +43,7 @@ class Leaf extends Pattern
             return array();
         }
         
-        if(($matches = $this->matchPatternRegex($pattern, $string)) === null) {
-            return null;
-        }
-        
-        return $pattern->mapMatches($matches);        
-    }
-    
-    protected function prepareRegex($regex)
-    {
-        return "#^$regex$#";
+        return $this->matcher->match($pattern, $string);
     }
     
     public function generate($match, $withHost = false)
