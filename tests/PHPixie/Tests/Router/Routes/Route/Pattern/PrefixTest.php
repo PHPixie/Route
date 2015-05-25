@@ -1,11 +1,11 @@
 <?php
 
-namespace PHPixie\Tests\Router\Routes\Route;
+namespace PHPixie\Tests\Router\Routes\Route\Pattern;
 
 /**
- * @coversDefaultClass \PHPixie\Router\Routes\Route\Pattern\Implementation
+ * @coversDefaultClass \PHPixie\Router\Routes\Route\Pattern\Prefix
  */
-class ImplementationTest extends \PHPixie\Tests\Router\Routes\Route\PatternTest
+abstract class PrefixTest extends \PHPixie\Tests\Router\Routes\Route\PatternTest
 {
     /**
      * @covers ::match
@@ -17,7 +17,8 @@ class ImplementationTest extends \PHPixie\Tests\Router\Routes\Route\PatternTest
         $this->matchTest(true, false);
         $this->matchTest(true, true, false);
         $this->matchTest(true, true, true);
-        $this->matchTest(null, null, null);
+        $this->matchTest(true, true, true, true);
+        $this->matchTest(null, null, null, true);
     }
     
     /**
@@ -32,15 +33,20 @@ class ImplementationTest extends \PHPixie\Tests\Router\Routes\Route\PatternTest
         $this->generateTest(true, true, true);
     }
     
-    protected function matchTest($methodValid = null, $hostValid = null, $pathValid = null)
+    protected function matchTest(
+        $methodValid = null,
+        $hostValid = null,
+        $pathValid = null,
+        $groupValid = false
+    )
     {
-        $this->route = $this->route();
+        $this->route = $this->routeMock(array('group'));
         $fragment = $this->getFragment();
-        $match = $this->prepareMatchTest($fragment, $methodValid, $hostValid, $pathValid);
+        $match = $this->prepareMatchTest($fragment, $methodValid, $hostValid, $pathValid, $groupValid);
         $this->assertSame($match, $this->route->match($fragment));
     }
     
-    protected function prepareMatchTest($fragment, $methodValid, $hostValid, $pathValid)
+    protected function prepareMatchTest($fragment, $methodValid, $hostValid, $pathValid, $groupValid)
     {
         $builderAt  = 0;
         $configAt   = 0;
@@ -53,7 +59,7 @@ class ImplementationTest extends \PHPixie\Tests\Router\Routes\Route\PatternTest
         }
         
         $this->method($fragment, 'host', 'pixie', array(), $fragmentAt++);
-        $hostAttributes = $this->prepareMatchPattern(
+        list($hostAttributes, $host) = $this->prepareMatchPattern(
             'host',
             $hostValid,
             'pixie',
@@ -68,7 +74,7 @@ class ImplementationTest extends \PHPixie\Tests\Router\Routes\Route\PatternTest
         }
         
         $this->method($fragment, 'path', 'pixie', array(), $fragmentAt++);
-        $pathAttributes = $this->prepareMatchPattern(
+        list($pathAttributes, $path) = $this->prepareMatchPattern(
             'path',
             $pathValid,
             'pixie',
@@ -87,8 +93,19 @@ class ImplementationTest extends \PHPixie\Tests\Router\Routes\Route\PatternTest
         
         $attributes = array_merge($defaults, $hostAttributes, $pathAttributes);
         
-        $match = $this->getMatch();
-        $this->method($this->builder, 'translatorMatch', $match, array($attributes), $builderAt++);
+        $subFragment = $this->getFragment();
+        $this->method($fragment, 'copy', $subFragment, array($path, $host), $fragmentAt++);
+        
+        $group = $this->getRoute();
+        $this->method($this->route, 'group', $group, array());
+        
+        $match = $groupValid ? $this->getMatch() : null;
+        $this->method($group, 'match', $match, array($subFragment), 0);
+        
+        if($groupValid) {
+            $this->method($match, 'prependAttributes', null, array($attributes), 0);
+        }
+        
         return $match;
     }
     
@@ -111,22 +128,31 @@ class ImplementationTest extends \PHPixie\Tests\Router\Routes\Route\PatternTest
         );
         
         if($pattern === null) {
-            return array();
+            return array(array(), $string);
         }
         
         $attributes = $isValid ? array($name => 1, 'override' => $name) : null;
         $this->method($this->builder, 'matcher', $this->matcher, array(), $builderAt++);
-        $this->method($this->matcher, 'match', $attributes, array($pattern, $string), $matcherAt++);
-        return $attributes;
+        
+        $result = array($attributes, 'tail-'.$name);
+        $this->method($this->matcher, 'matchPrefix', $result, array($pattern, $string), $matcherAt++);
+        return $result;
     }
     
     protected function generateTest($withHost = false, $pathExists = false, $hostExists = false)
     {
-        $this->route = $this->route();
+        $this->route = $this->routeMock(array('group'));
         $match = $this->getMatch();
         
-        $builderAt = 0;
-        $configAt  = 0;
+        $builderAt  = 0;
+        $configAt   = 0;
+        $fragmentAt = 0;
+        
+        $group = $this->getRoute();
+        $this->method($this->route, 'group', $group, array());
+        
+        $fragment = $this->getFragment();
+        $this->method($group, 'generate', $fragment, array($match, $withHost), 0);
         
         $attributes = array('a' => 2);
         $mergedAttributes = $this->prepareMergeAttributes($match, $attributes, $configAt);
@@ -140,6 +166,9 @@ class ImplementationTest extends \PHPixie\Tests\Router\Routes\Route\PatternTest
             $builderAt
         );
         
+        $this->method($fragment, 'path', 'pixie', array(), $fragmentAt++);
+        $this->method($fragment, 'setPath', null, array($path.'pixie'), $fragmentAt++);
+        
         if($withHost) {
             $host = $this->prepareGeneratePatternString(
                 'host',
@@ -149,12 +178,13 @@ class ImplementationTest extends \PHPixie\Tests\Router\Routes\Route\PatternTest
                 $configAt,
                 $builderAt
             );
+            
+        
+            $this->method($fragment, 'host', 'pixie', array(), $fragmentAt++);
+            $this->method($fragment, 'setHost', null, array($host.'pixie'), $fragmentAt++);
         }else{
             $host = null;
         }
-        
-        $fragment = $this->getFragment();
-        $this->method($this->builder, 'translatorFragment', $fragment, array($path, $host), $builderAt++);
         
         if($withHost) {
             $result = $this->route->generate($match, true);
@@ -166,11 +196,10 @@ class ImplementationTest extends \PHPixie\Tests\Router\Routes\Route\PatternTest
         $this->assertSame($fragment, $result);
     }
     
-    protected function route()
+    protected function getRoute()
     {
-        return new \PHPixie\Router\Routes\Route\Pattern\Implementation(
-            $this->builder,
-            $this->configData
-        );
+        return $this->quickMock('\PHPixie\Router\Routes\Route');
     }
+    
+    abstract protected function routeMock($methods);
 }

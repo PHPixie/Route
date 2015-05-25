@@ -26,8 +26,7 @@ abstract class PatternTest extends \PHPixie\Test\Testcase
         
         $this->route = $this->route();
         
-        $this->matcher = $this->quickMock('\PHPixie\Router\Routes\Matcher');
-        $this->method($this->builder, 'matcher', $this->matcher, array());
+        $this->matcher = $this->quickMock('\PHPixie\Router\Matcher');
     }
     
     /**
@@ -72,10 +71,11 @@ abstract class PatternTest extends \PHPixie\Test\Testcase
         $attributePatterns = array('t' => '.+');
         
         foreach(array('host', 'path') as $key => $name) {
-            $pattern = $this->preparePattern($name, $attributePatterns);
+            $pattern = $this->prepareBuildPattern($name, $attributePatterns);
             
             if($key === 0) {
-                $this->prepareConfigGet('attributePatterns', $attributePatterns, array(), 1);
+                $at = 1;
+                $this->prepareConfigGet('attributePatterns', $attributePatterns, array(), $at);
             }
             
             for($i=0; $i<2; $i++) {
@@ -100,19 +100,82 @@ abstract class PatternTest extends \PHPixie\Test\Testcase
         }
     }
     
-    protected function prepareConfigGet($key, $value, $default = null, $configAt = 0)
+    protected function prepareIsMethodValid($fragment, $methodValid, &$configAt, &$fragmentAt)
+    {
+        if($methodValid === null) {
+            $this->prepareConfigGet('methods', null, null, $configAt);
+            
+        }else{
+            $this->prepareConfigGet('methods', array('GET', 'POST'), null, $configAt);
+            $serverRequest = $this->getServerRequest();
+            
+            $this->method($fragment, 'serverRequest', $serverRequest, array(), $fragmentAt++);
+            $method = $methodValid ? 'GET' : 'PUT';
+            $this->method($serverRequest, 'getMethod', $method, array(), 0);
+        }
+    }
+    
+    protected function prepareConfigGet($key, $value, $default = null, &$configAt = 0)
     {
         $params = array($key);
         if($default !== null) {
             $params[]= $default;
         }
         
-        $this->method($this->configData, 'get', $value, $params, $configAt);
+        $this->method($this->configData, 'get', $value, $params, $configAt++);
     }
     
-    protected function preparePattern($name, $attributePatterns, &$configAt = 0, &$builderAt = 0)
+    protected function preparePattern($name, $exists, $prepareAttributePatterns, &$configAt, &$builderAt)
     {
-        $this->prepareConfigGet($name, 'pixie', null);
+        if(!$exists) {
+            $this->prepareConfigGet($name, null, null, $configAt);
+            return null;
+        }
+        
+        $attributePatterns = array('t' => 1);
+        if($prepareAttributePatterns) {
+            $attributeAt = $configAt+1;
+            $this->prepareConfigGet('attributePatterns', $attributePatterns, array(), $attributeAt);
+        }
+        
+        $pattern = $this->prepareBuildPattern($name, $attributePatterns, $configAt, $builderAt);
+        
+        if($prepareAttributePatterns) {
+            $configAt++;
+        }
+        
+        return $pattern;
+    }
+    
+    protected function prepareGeneratePatternString(
+        $name,
+        $exists,
+        $attributes,
+        $prepareAttributePatterns,
+        &$configAt,
+        &$builderAt
+    )
+    {
+        $pattern = $this->preparePattern(
+            $name,
+            $exists,
+            $prepareAttributePatterns,
+            $configAt,
+            $builderAt
+        );
+        
+        if($pattern === null) {
+            return '';
+        }
+        
+        $string = 'gen-'.$name;
+        $this->method($pattern, 'generate', $string, array($attributes), 0);
+        return $string;
+    }
+    
+    protected function prepareBuildPattern($name, $attributePatterns, &$configAt = 0, &$builderAt = 0)
+    {
+        $this->prepareConfigGet($name, 'pixie', null, $configAt);
         
         $pattern = $this->getPattern();
         
@@ -123,6 +186,30 @@ abstract class PatternTest extends \PHPixie\Test\Testcase
         ), $builderAt++);
         
         return $pattern;
+    }
+    
+    protected function prepareMergeAttributes($match, $attributes, &$configAt = 0, &$matchAt = 0)
+    {
+        $defaults = array('default' => 1, 'a' => 1);
+        $this->prepareConfigGet('defaults', $defaults, array(), $configAt);
+        
+        $this->method($match, 'attributes', $attributes, array(), $matchAt);
+        return array_merge($defaults, $attributes);
+    }
+    
+    protected function getFragment()
+    {
+        return $this->quickMock('\PHPixie\Router\Translator\Fragment');
+    }
+    
+    protected function getMatch()
+    {
+        return $this->quickMock('\PHPixie\Router\Translator\Match');
+    }
+    
+    protected function getServerRequest()
+    {
+        return $this->quickMock('\Psr\Http\Message\ServerRequestInterface');
     }
     
     protected function getPattern()

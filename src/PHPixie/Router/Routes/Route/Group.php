@@ -1,6 +1,6 @@
 <?php
 
-namespace PHPixie\Router\Routes;
+namespace PHPixie\Router\Routes\Route;
 
 class Group
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace PHPixie\Tests\Router\Routes;
+namespace PHPixie\Tests\Router\Routes\Route;
 
 /**
- * @coversDefaultClass \PHPixie\Router\Routes\Group
+ * @coversDefaultClass \PHPixie\Router\Routes\Route\Group
  */
 class GroupTest extends \PHPixie\Test\Testcase
 {
@@ -19,7 +19,7 @@ class GroupTest extends \PHPixie\Test\Testcase
         $this->routeBuilder = $this->quickMock('\PHPixie\Router\Routes');
         $this->configData   = $this->getSliceData();
         
-        $this->group = new \PHPixie\Router\Routes\Group(
+        $this->group = new \PHPixie\Router\Routes\Route\Group(
             $this->routeBuilder,
             $this->configData
         );

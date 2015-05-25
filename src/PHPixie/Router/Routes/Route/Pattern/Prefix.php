@@ -1,8 +1,10 @@
 <?php
 
-class Group extends Pattern
+namespace PHPixie\Router\Routes\Route\Pattern;
+
+abstract class Prefix extends \PHPixie\Router\Routes\Route\Pattern
 {
-    public function match()
+    public function match($fragment)
     {
         if(!$this->isMethodValid($fragment)) {
             return null;
@@ -32,10 +34,11 @@ class Group extends Pattern
             $pathAttributes
         );
         
-        $fragment = $fragment->copy($host, $path);
+        $fragment = $fragment->copy($path, $host);
         
-        if(($match = $this->routes()->match($fragment)) !== null) {
-            $match->prepend(null, $attributes);
+        $match = $this->group()->match($fragment);
+        if($match !== null) {
+            $match->prependAttributes($attributes);
         }
         
         return $match;
@@ -47,30 +50,26 @@ class Group extends Pattern
             return array(array(), $string);
         }
         
-        return $this->matcher->matchPrefix($pattern, $string);
+        return $this->builder->matcher()->matchPrefix($pattern, $string);
     }
 
     public function generate($match, $withHost = false)
     {
-        $fragment = $this->routes()->generate($match, $withHost);
-        $attributes = $match->attributes();
+        $fragment   = $this->group()->generate($match, $withHost);
+        $attributes = $this->mergeAttributes($match);
         
-        if(($pathPattern = $this->pathPattern()) !== null) {
-            $path = $this->prefix($pathPattern, $attributes, $fragment->path());
-            $fragment->setPath($path);
-        }
+        $path = $this->generatePatternString($this->pathPattern(), $attributes);
+        $path.= $fragment->path();
+        $fragment->setPath($path);
         
-        if($withHost && ($hostPattern = $this->hostPattern()) !== null) {
-            $host = $this->prefix($hostPattern, $attributes, $fragment->host());
+        if($withHost) {
+            $host = $this->generatePatternString($this->hostPattern(), $attributes);
+            $host.= $fragment->host();
             $fragment->setHost($host);
         }
         
         return $fragment;
     }
         
-    protected function prefix($pattern, $string)
-    {
-        $prefix = $pathPattern->generate($attributes);
-        return $prefix.$string;
-    }
+    abstract public function route();
 }

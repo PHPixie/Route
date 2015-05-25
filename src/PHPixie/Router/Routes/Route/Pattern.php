@@ -26,7 +26,8 @@ abstract class Pattern implements \PHPixie\Router\Routes\Route
     
     public function pathPattern()
     {
-        return $this->pattern('path','[^/]+?');
+        $p = $this->pattern('path','[^/]+?');
+        return $p;
     }
     
     public function defaults()
@@ -56,10 +57,8 @@ abstract class Pattern implements \PHPixie\Router\Routes\Route
                     $this->attributePatterns()
                 );
             }
-            
             $this->processed[$key] = $pattern;
         }
-        
         return $this->processed[$key];
     }
     
@@ -83,7 +82,22 @@ abstract class Pattern implements \PHPixie\Router\Routes\Route
         return in_array($method, $methods, true);
     }
     
-
+    protected function generatePatternString($pattern, $attributes)
+    {
+        if($pattern === null) {
+            return '';
+        }
+        
+        return $pattern->generate($attributes);
+    }
+    
+    protected function mergeAttributes($match)
+    {
+        return array_merge(
+            $this->defaults(),
+            $match->attributes()
+        );
+    }
     
     abstract public function generate($match, $withHost = false);
 }

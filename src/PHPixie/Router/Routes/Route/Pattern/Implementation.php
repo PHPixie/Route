@@ -4,7 +4,7 @@ namespace PHPixie\Router\Routes\Route\Pattern;
 
 class Implementation extends \PHPixie\Router\Routes\Route\Pattern
 {
-    public function match($segment)
+    public function match($fragment)
     {
         if(!$this->isMethodValid($fragment)) {
             return null;
@@ -12,16 +12,16 @@ class Implementation extends \PHPixie\Router\Routes\Route\Pattern
         
         $hostAttributes = $this->matchPattern(
             $this->hostPattern(),
-            $fragment->getHost()
+            $fragment->host()
         );
         
         if($hostAttributes === null) {
             return null;
         }
-            
+        
         $pathAttributes = $this->matchPattern(
             $this->pathPattern(),
-            $fragment->getPath()
+            $fragment->path()
         );
         
         if($pathAttributes === null) {
@@ -42,16 +42,17 @@ class Implementation extends \PHPixie\Router\Routes\Route\Pattern
         if($pattern === null) {
             return array();
         }
-        
-        return $this->matcher->match($pattern, $string);
+        return $this->builder->matcher()->match($pattern, $string);
     }
     
     public function generate($match, $withHost = false)
     {
-        $path = $this->generate($this->pathPattern(), $attributes);
+        $attributes = $this->mergeAttributes($match);
+        
+        $path = $this->generatePatternString($this->pathPattern(), $attributes);
         
         if($withHost) {
-            $host = $this->generate($this->hostPattern(), $attributes);
+            $host = $this->generatePatternString($this->hostPattern(), $attributes);
         }else{
             $host = null;
         }
