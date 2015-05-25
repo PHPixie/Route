@@ -8,4 +8,6 @@ class Builder
     public function matcher(){}
     public function translatorMatch(){}
     public function translatorFragment(){}
+    public function routes(){}
+    public function getHttpContext(){}
 }

@@ -71,6 +71,16 @@ class MatchTest extends \PHPixie\Test\Testcase
     }
     
     /**
+     * @covers ::prependPath
+     * @covers ::<protected>
+     */
+    public function testPrependPath()
+    {
+        $this->match->prependPath('fairy');
+        $this->assertSame('fairy.'.$this->path, $this->match->path());
+    }
+    
+    /**
      * @covers ::prependAttributes
      * @covers ::<protected>
      */

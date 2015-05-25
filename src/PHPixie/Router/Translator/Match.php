@@ -39,7 +39,10 @@ class Match
         return $parts[0];
     }
     
-    public function prepend(){}
+    public function prependPath($path)
+    {
+        $this->path = $path.'.'.$this->path;
+    }
     
     public function prependAttributes($attributes)
     {

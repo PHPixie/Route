@@ -46,7 +46,7 @@ class Group
             $route = $this->get($name);
             $match = $route->match($segment);
             if($match !== null) {
-                $match->prepend($name);
+                $match->prependPath($name);
                 break;
             }
         }

@@ -8,6 +8,7 @@ class Routes
     protected $names;
     protected $routes;
     
+    public function buildFromConfig(){}
     public function __construct($configData)
     {
         $this->configData = $configData;
