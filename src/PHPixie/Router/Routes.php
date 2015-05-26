@@ -4,66 +4,49 @@ namespace PHPixie\Router;
 
 class Routes
 {
-    protected $configData;
-    protected $names;
-    protected $routes;
+    protected $builder;
     
-    public function buildFromConfig(){}
-    public function __construct($configData)
+    protected $routes = array(
+        'group',
+        'pattern',
+        'prefix'
+    );
+    
+    public function __construct($builder)
     {
-        $this->configData = $configData;
+        $this->builder = $builder;
     }
     
-    public function names()
+    public function group($configData)
     {
-        if($this->names === null) {
-            $this->names = $this->configData->keys();
+        return new Routes\Route\Group(
+            $this,
+            $configData
+        );
+    }
+    
+    public function pattern($configData)
+    {
+        return new Routes\Route\Pattern\Implementation(
+            $this->builder,
+            $configData
+        );
+    }
+    
+    public function prefix($configData)
+    {
+        return new Routes\Route\Pattern\Prefix(
+            $this->builder,
+            $configData
+        );
+    }
+    
+    public function buildFromConfig($configData) {
+        $type = $configData->get('type', 'pattern');
+        if(!in_array($type, $this->routes, true)) {
+            throw new \PHPixie\Router\Exception("Route type '$type' does not exist");
         }
         
-        return $this->names;
+        return $this->$type($configData);
     }
-    
-    public function get($name)
-    {
-        if(array_key_exists($name, $this->routes)) {
-            $configData = $this->configData->slice($name);
-            $this->routes[$name] = $this->builder->buildRoute($configData);
-        }
-        
-        return $this->routes[$name];
-    }
-    
-    public function match($segment)
-    {
-        $attributes = null;
-        
-        foreach($this->names() as $name) {
-            $route = $this->get($name);
-            $attributes = $route->match($segment);
-            if($attributes !== null) {
-                break;
-            }
-        }
-        
-        return $attributes;
-    }
-    
-    public function generatePath($path, $attributes)
-    {
-        $name = array_shift($path);
-        $route = $this->get($name);
-        
-        return $route->generatePath($path, $attributes);
-    }
-    
-    public function generateUri($path, $attributes)
-    {
-        $name = array_shift($path);
-        $route = $this->get($name);
-        
-        return $route->generateUri($path, $attributes);
-    }
-    
-    public function buildRoute($configData)
-    {}
 }

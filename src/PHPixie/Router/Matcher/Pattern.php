@@ -5,16 +5,17 @@ namespace PHPixie\Router\Matcher;
 class Pattern
 {
     protected $pattern;
-    protected $attributePatterns;
-    protected $defaults;
+    protected $defaultParameterPattern;
+    protected $parameterPatterns;
     
     protected $regex;
     protected $parameterNames = array();
     
-    public function __construct($pattern, $attributePatterns)
+    public function __construct($pattern, $defaultParameterPattern = '.+?', $parameterPatterns = array())
     {
-        $this->pattern           = $pattern;
-        $this->attributePatterns = $attributePatterns;
+        $this->pattern                 = $pattern;
+        $this->defaultParameterPattern = $defaultParameterPattern;
+        $this->parameterPatterns       = $parameterPatterns;
     }
     
     protected function prepareRegex()
@@ -28,10 +29,10 @@ class Pattern
         $parameterNames = array();
         $this->regex = preg_replace_callback(
             '#<(.*?)>#',
-            function($matches) use($attributePatterns, &$parameterNames) {
+            function($matches) use($parameterPatterns, &$parameterNames) {
                 $parameterNames[]= $matches[1];
-                if(array_key_exists($matches[1], $attributePatterns)) {
-                    $regexp = $attributePatterns[$matches[1]];
+                if(array_key_exists($matches[1], $parameterPatterns)) {
+                    $regexp = $parameterPatterns[$matches[1]];
 
                 }else{
                     $regexp = '[^/]+';

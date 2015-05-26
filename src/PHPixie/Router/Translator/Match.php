@@ -4,12 +4,12 @@ namespace PHPixie\Router\Translator;
 
 class Match
 {
-    protected $path;
+    protected $routePath;
     protected $attributes;
     
-    public function __construct($path = null, $attributes = array())
+    public function __construct($routePath = null, $attributes = array())
     {
-        $this->path       = $path;
+        $this->routePath       = $routePath;
         $this->attributes = $attributes;
     }
     

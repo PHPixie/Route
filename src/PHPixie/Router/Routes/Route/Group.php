@@ -8,9 +8,9 @@ class Group
     protected $configData;
     
     protected $names;
-    protected $routes;
+    protected $routeMap;
     
-    public function __construct($routeBuilder, $configData)
+    public function __construct($routes, $configData)
     {
         $this->routes     = $routes;
         $this->configData = $configData;
@@ -26,16 +26,16 @@ class Group
     {
         $this->requireRouteNames();
         
-        if(!array_key_exists($name, $this->routes)) {
+        if(!array_key_exists($name, $this->routeMap)) {
             throw new \PHPixie\Router\Exception\Route();
         }
         
-        if($this->routes[$name] === null) {
+        if($this->routeMap[$name] === null) {
             $configData = $this->configData->slice($name);
-            $this->routes[$name] = $this->routes->buildRoute($configData);
+            $this->routeMap[$name] = $this->routes->buildRoute($configData);
         }
         
-        return $this->routes[$name];
+        return $this->routeMap[$name];
     }
     
     public function match($segment)
@@ -64,8 +64,8 @@ class Group
     protected function requireRouteNames()
     {
         if($this->names === null) {
-            $this->names  = $this->configData->keys();
-            $this->routes = array_fill_keys($this->names, null);
+            $this->names    = $this->configData->keys();
+            $this->routeMap = array_fill_keys($this->names, null);
         }
     }
 }
