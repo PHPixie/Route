@@ -22,7 +22,7 @@ abstract class PatternTest extends \PHPixie\Test\Testcase
     public function setUp()
     {
         $this->builder    = $this->quickMock('\PHPixie\Router\Builder');
-        $this->configData = $this->quickMock('\PHPixie\Slice\Data');
+        $this->configData = $this->getSliceData();
         
         $this->route = $this->route();
         
@@ -195,6 +195,11 @@ abstract class PatternTest extends \PHPixie\Test\Testcase
         
         $this->method($match, 'attributes', $attributes, array(), $matchAt);
         return array_merge($defaults, $attributes);
+    }
+    
+    protected function getSliceData()
+    {
+        return $this->quickMock('\PHPixie\Slice\Data');
     }
     
     protected function getFragment()

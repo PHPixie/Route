@@ -5,7 +5,7 @@ namespace PHPixie\Tests\Router\Routes\Route\Pattern;
 /**
  * @coversDefaultClass \PHPixie\Router\Routes\Route\Pattern\Prefix
  */
-abstract class PrefixTest extends \PHPixie\Tests\Router\Routes\Route\PatternTest
+class PrefixTest extends \PHPixie\Tests\Router\Routes\Route\PatternTest
 {
     /**
      * @covers ::match
@@ -31,6 +31,26 @@ abstract class PrefixTest extends \PHPixie\Tests\Router\Routes\Route\PatternTest
         $this->generateTest(true);
         $this->generateTest(true, true);
         $this->generateTest(true, true, true);
+    }
+    
+    /**
+     * @covers ::route
+     * @covers ::<protected>
+     */
+    public function testRoute()
+    {
+        $routes = $this->quickMock('\PHPixie\Router\Routes');
+        $this->method($this->builder, 'routes', $routes, array(), 0);
+        
+        $routeConfig = $this->getSliceData();
+        $this->method($this->configData, 'slice', $routeConfig, array('route'), 0);
+        
+        $route = $this->getRoute();
+        $this->method($routes, 'buildFromConfig', $route, array($routeConfig), 0);
+        
+        for($i = 0; $i < 2; $i++) {
+            $this->assertSame($route, $this->route->route());
+        }
     }
     
     protected function matchTest(
@@ -200,6 +220,24 @@ abstract class PrefixTest extends \PHPixie\Tests\Router\Routes\Route\PatternTest
     {
         return $this->quickMock('\PHPixie\Router\Routes\Route');
     }
+        
+    protected function route()
+    {
+        return new \PHPixie\Router\Routes\Route\Pattern\Prefix(
+            $this->builder,
+            $this->configData
+        );
+    }
     
-    abstract protected function routeMock($methods);
+    protected function routeMock($methods = array())
+    {
+        return $this->getMock(
+            '\PHPixie\Router\Routes\Route\Pattern\Prefix',
+            $methods,
+            array(
+                $this->builder,
+                $this->configData
+            )
+        );
+    }
 }

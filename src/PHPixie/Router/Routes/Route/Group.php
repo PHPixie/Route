@@ -4,7 +4,7 @@ namespace PHPixie\Router\Routes\Route;
 
 class Group
 {
-    protected $routeBuilder;
+    protected $routes;
     protected $configData;
     
     protected $names;
@@ -12,8 +12,8 @@ class Group
     
     public function __construct($routeBuilder, $configData)
     {
-        $this->routeBuilder = $routeBuilder;
-        $this->configData   = $configData;
+        $this->routes     = $routes;
+        $this->configData = $configData;
     }
     
     public function names()
@@ -32,7 +32,7 @@ class Group
         
         if($this->routes[$name] === null) {
             $configData = $this->configData->slice($name);
-            $this->routes[$name] = $this->routeBuilder->buildRoute($configData);
+            $this->routes[$name] = $this->routes->buildRoute($configData);
         }
         
         return $this->routes[$name];

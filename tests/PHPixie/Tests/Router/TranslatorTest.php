@@ -56,9 +56,35 @@ class TranslatorTest extends \PHPixie\Test\Testcase
     public function testMatch()
     {
         $this->matchTest();
-        //$this->matchTest(true);
-        //$this->matchTest(true, true);
+        $this->matchTest(true);
+        $this->matchTest(true, true);
         $this->matchTest(true, true, true);
+    }
+    
+    /**
+     * @covers ::generatePath
+     * @covers ::<protected>
+     */
+    public function testGeneratePath()
+    {
+        $routePath  = 'pixie.trixie';
+        $attributes = array('t' => 1);
+        
+        $fragment = $this->prepareGenerateFragment($routePath, $attributes);
+        $this->method($fragment, 'path', 'pixie', array(), 0);
+        
+        $generated = $this->translator->generatePath($routePath, $attributes);
+        $this->assertSame($this->basePath.'pixie', $generated);
+    }
+    
+    /**
+     * @covers ::generateUri
+     * @covers ::<protected>
+     */
+    public function testGenerateUri()
+    {
+        $this->generateUriTest();
+        $this->generateUriTest(true);
     }
     
     protected function matchTest($hostValid = false, $pathValid = false, $withServerRequest = false)
@@ -106,6 +132,55 @@ class TranslatorTest extends \PHPixie\Test\Testcase
         $match = $this->getMatch();
         $this->method($this->route, 'match', $match, array($fragment), 0);
         return $match;
+    }
+    
+    protected function generateUriTest($withHost = false)
+    {
+        $routePath  = 'pixie.trixie';
+        $attributes = array('t' => 1);
+        
+        $builderAt = 0;
+        
+        $fragment = $this->prepareGenerateFragment($routePath, $attributes, $withHost, $builderAt);
+        
+        $serverRequest = $this->getServerRequest();
+        $this->prepareCurrentServerRequest($serverRequest, $builderAt);
+
+        $uri = $this->getUri();
+        $this->method($serverRequest, 'getUri', $uri, array(), 0);
+        
+        $this->method($fragment, 'path', 'pixie-path', array(), 0);
+        $pathUri = $this->getUri();
+        $this->method($uri, 'withPath', $pathUri, array($this->basePath.'pixie-path'), 0);
+        $uri = $pathUri;
+        
+        if($withHost) {
+            $this->method($fragment, 'host', 'pixie-host', array(), 1);
+            $hostUri = $this->getUri();
+            $this->method($uri, 'withHost', $hostUri, array($this->baseHost.'pixie-host'), 0);
+            $uri = $hostUri;
+        }
+        
+        if($withHost) {
+            $result = $this->translator->generateUri($routePath, $attributes, $withHost);
+        }else{
+            $result = $this->translator->generateUri($routePath, $attributes);
+        }
+        
+        $this->assertSame($uri, $result);
+    }
+    
+    protected function prepareGenerateFragment($routePath, $attributes, $withHost = false, &$builderAt = 0)
+    {
+        $match = $this->getMatch();
+        $this->method($this->builder, 'translatorMatch', $match, array(
+            $routePath,
+            $attributes
+        ), $builderAt++);
+        
+        $fragment = $this->getFragment();
+        $this->method($this->route, 'generate', $fragment, array($match, $withHost), 0);
+        return $fragment;
     }
     
     protected function prepareCurrentServerRequest($serverRequest, &$builderAt = 0)

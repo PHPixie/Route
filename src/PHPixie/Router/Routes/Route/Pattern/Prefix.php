@@ -2,8 +2,10 @@
 
 namespace PHPixie\Router\Routes\Route\Pattern;
 
-abstract class Prefix extends \PHPixie\Router\Routes\Route\Pattern
+class Prefix extends \PHPixie\Router\Routes\Route\Pattern
 {
+    protected $route;
+    
     public function match($fragment)
     {
         if(!$this->isMethodValid($fragment)) {
@@ -70,6 +72,15 @@ abstract class Prefix extends \PHPixie\Router\Routes\Route\Pattern
         
         return $fragment;
     }
+    
+    public function route()
+    {
+        if($this->route === null) {
+            $routeConfig = $this->configData->slice('route');
+            $routes = $this->builder->routes();
+            $this->route = $routes->buildFromConfig($routeConfig);
+        }
         
-    abstract public function route();
+        return $this->route;
+    }
 }

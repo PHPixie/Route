@@ -51,7 +51,7 @@ class Translator
     public function generatePath($routePath, $attributes)
     {
         $fragment = $this->generateFragment($routePath, $attributes);
-        return $this->getNormalizedPath($fragment);
+        return $this->basePath.$fragment->path();
     }
     
     public function generateUri($routePath, $attributes, $withHost = false)
@@ -59,9 +59,9 @@ class Translator
         $fragment = $this->generateFragment($routePath, $attributes, $withHost);
         $uri = $this->currentServerRequest()->getUri();
         
-        $uri = $uri->withPath($this->normalizePath($fragment));
+        $uri = $uri->withPath($this->basePath.$fragment->path());
         if($withHost) {
-            $uri = $uri->withHost($this->normalizeHost($fragment));
+            $uri = $uri->withHost($this->baseHost.$fragment->host());
         }
         
         return $uri;
@@ -74,7 +74,7 @@ class Translator
             $attributes
         );
         
-        return $this->route()->generate($match, $withHost);
+        return $this->route->generate($match, $withHost);
     }
     
     protected function stripPrefix($string, $prefix)
@@ -85,16 +85,6 @@ class Translator
         }
         
         return substr($string, $length);
-    }
-    
-    protected function normalizePath($fragment)
-    {
-        return $this->basePath.$fragment->getPath();
-    }
-    
-    protected function normalizeHost($fragment)
-    {
-        return $this->basePath.$fragment->getPath();
     }
     
     protected function currentServerRequest()

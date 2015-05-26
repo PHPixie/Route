@@ -4,13 +4,13 @@ namespace PHPixie\Router;
 
 class Path
 {
-    protected $generator;
+    protected $translator;
     protected $name;
     
     public function __construct($generator, $name)
     {
-        $this->generator = $generator;
-        $this->name      = $name;
+        $this->translator = $translator;
+        $this->name       = $name;
     }
     
     public function name($name)
