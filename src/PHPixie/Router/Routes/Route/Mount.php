@@ -2,11 +2,18 @@
 
 namespace PHPixie\Router\Routes\Route;
 
-class Mount
+class Mount implements \PHPixie\Router\Routes\Route
 {
     protected $routeRegistry;
-    protected $name;
+    protected $configData;
+    
     protected $route;
+    
+    public function __construct($routeRegistry, $configData)
+    {
+        $this->routeRegistry = $routeRegistry;
+        $this->configData    = $configData;
+    }
     
     public function route()
     {
@@ -25,6 +32,6 @@ class Mount
     
     public function generate($match, $withHost = false)
     {
-        return $this->route()->generate($match, $withHost = false);
+        return $this->route()->generate($match, $withHost);
     }
 }
