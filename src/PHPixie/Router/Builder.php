@@ -38,6 +38,14 @@ class Builder
         );
     }
     
+    public function target($routePath)
+    {
+        return new Target(
+            $this->translator(),
+            $routePath
+        );
+    }
+    
     public function matcher()
     {
         return $this->instance('matcher');

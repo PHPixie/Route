@@ -93,6 +93,21 @@ class BuilderTest extends \PHPixie\Test\Testcase
     }
     
     /**
+     * @covers ::target
+     * @covers ::<protected>
+     */
+    public function testTarget()
+    {
+        $this->prepareTranslator();
+        
+        $target = $this->builder->target('pixie');
+        $this->assertInstance($target, '\PHPixie\Router\Target', array(
+            'routePath'  => 'pixie',
+            'translator' => $this->builder->translator()
+        ));
+    }
+    
+    /**
      * @covers ::matcher
      * @covers ::<protected>
      */
@@ -109,15 +124,20 @@ class BuilderTest extends \PHPixie\Test\Testcase
      */
     public function testTranslator()
     {
-        $routeConfig = $this->getSliceData();
-        $this->method($this->configData, 'slice', $routeConfig, array('route'));
-        $this->method($routeConfig, 'get', 'group', array('type', 'pattern'), 0);
+        $this->prepareTranslator();
         
         $translator = $this->builder->translator();
         $this->assertInstance($translator, '\PHPixie\Router\Translator', array(
             'builder'    => $this->builder
         ));
         $this->assertSame($translator, $this->builder->translator());
+    }
+    
+    protected function prepareTranslator()
+    {
+        $routeConfig = $this->getSliceData();
+        $this->method($this->configData, 'slice', $routeConfig, array('route'));
+        $this->method($routeConfig, 'get', 'group', array('type', 'pattern'), 0);
     }
     
     protected function getSliceData()

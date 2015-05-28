@@ -26,8 +26,7 @@ abstract class Pattern implements \PHPixie\Router\Routes\Route
     
     public function pathPattern()
     {
-        $p = $this->pattern('path','[^/]+?');
-        return $p;
+        return $this->pattern('path','[^/]+?');
     }
     
     public function defaults()
