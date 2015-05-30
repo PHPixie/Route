@@ -1,5 +1,5 @@
 {
-    "name": "phpixie/route",
+    "name": "phpixie/router",
     "description": "Routing library for PHPixie",
     "keywords": ["routing", "route"],
     "homepage": "http://phpixie.com",
