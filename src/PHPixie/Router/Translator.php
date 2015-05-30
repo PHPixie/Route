@@ -5,14 +5,16 @@ namespace PHPixie\Router;
 class Translator
 {
     protected $builder;
+    protected $httpContextContainer;
     
     protected $basePath;
     protected $baseHost;
     protected $route;
     
-    public function __construct($builder, $configData)
+    public function __construct($builder, $configData, $httpContextContainer = null)
     {
-        $this->builder  = $builder;
+        $this->builder              = $builder;
+        $this->httpContextContainer = $httpContextContainer;
         
         $this->basePath = $configData->get('basePath', '/');
         $this->baseHost = $configData->get('baseHost', '');
@@ -26,7 +28,6 @@ class Translator
         if($serverRequest === null) {
             $serverRequest = $this->currentServerRequest();
         }
-        
         $uri = $serverRequest->getUri();
         
         $host = $this->stripPrefix($uri->getHost(), $this->baseHost);
@@ -48,16 +49,25 @@ class Translator
         return $this->route->match($fragment);
     }
     
-    public function generatePath($routePath, $attributes)
+    public function generatePath($routePath, $attributes = array())
     {
         $fragment = $this->generateFragment($routePath, $attributes);
         return $this->basePath.$fragment->path();
     }
     
-    public function generateUri($routePath, $attributes, $withHost = false)
+    public function generateUri(
+        $routePath,
+        $attributes    = array(),
+        $withHost      = false,
+        $serverRequest = null
+    )
     {
-        $fragment = $this->generateFragment($routePath, $attributes, $withHost);
-        $uri = $this->currentServerRequest()->getUri();
+        if($serverRequest === null) {
+            $serverRequest = $this->currentServerRequest();
+        }
+        $uri = $serverRequest->getUri();
+        
+        $fragment = $this->generateFragment($routePath, $attributes, $withHost, $serverRequest);
         
         $uri = $uri->withPath($this->basePath.$fragment->path());
         if($withHost) {
@@ -67,7 +77,7 @@ class Translator
         return $uri;
     }
     
-    protected function generateFragment($routePath, $attributes, $withHost = false)
+    protected function generateFragment($routePath, $attributes, $withHost = false, $serverRequest = null)
     {
         $match = $this->builder->translatorMatch(
             $routePath,
@@ -89,6 +99,12 @@ class Translator
     
     protected function currentServerRequest()
     {
-        return $this->builder->getHttpContext()->serverRequest();
+        if($this->httpContextContainer === null)
+        {
+            throw new \PHPixie\Router\Exception("HTTP context container was not set");
+        }
+        
+        $context = $this->httpContextContainer->httpContext();
+        return $context->serverRequest();
     }
 }

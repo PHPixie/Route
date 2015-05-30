@@ -8,12 +8,22 @@ namespace PHPixie\Tests\Builder;
 class BuilderTest extends \PHPixie\Test\Testcase
 {
     protected $configData;
+    protected $httpContextContainer;
+    protected $routeRegistry;
+
     protected $builder;
     
     public function setUp()
     {
-        $this->configData = $this->getSliceData();
-        $this->builder = new \PHPixie\Router\Builder($this->configData);
+        $this->configData           = $this->getSliceData();
+        $this->httpContextContainer = $this->quickMock('\PHPixie\HTTP\Context\Container');
+        $this->routeRegistry        = $this->quickMock('\PHPixie\Router\Routes\Registry');
+        
+        $this->builder = new \PHPixie\Router\Builder(
+            $this->configData,
+            $this->httpContextContainer,
+            $this->routeRegistry
+        );
     }
     
     /**
@@ -119,6 +129,26 @@ class BuilderTest extends \PHPixie\Test\Testcase
     }
     
     /**
+     * @covers ::routes
+     * @covers ::<protected>
+     */
+    public function testRoutes()
+    {
+        $routes = $this->builder->routes();
+        $this->assertInstance($routes, '\PHPixie\Router\Routes', array(
+            'builder'       => $this->builder,
+            'routeRegistry' => $this->routeRegistry,
+        ));
+        $this->assertSame($routes, $this->builder->routes());
+        
+        $this->builder = new \PHPixie\Router\Builder($this->configData);
+        $this->assertInstance($this->builder->routes(), '\PHPixie\Router\Routes', array(
+            'builder'       => $this->builder,
+            'routeRegistry' => null,
+        ));
+    }
+    
+    /**
      * @covers ::translator
      * @covers ::<protected>
      */
@@ -128,15 +158,23 @@ class BuilderTest extends \PHPixie\Test\Testcase
         
         $translator = $this->builder->translator();
         $this->assertInstance($translator, '\PHPixie\Router\Translator', array(
-            'builder'    => $this->builder
+            'builder'              => $this->builder,
+            'httpContextContainer' => $this->httpContextContainer,
         ));
         $this->assertSame($translator, $this->builder->translator());
+        
+        $this->builder = new \PHPixie\Router\Builder($this->configData);
+        $this->prepareTranslator();
+        $this->assertInstance($this->builder->translator(), '\PHPixie\Router\Translator', array(
+            'builder'              => $this->builder,
+            'httpContextContainer' => null,
+        ));
     }
     
     protected function prepareTranslator()
     {
         $routeConfig = $this->getSliceData();
-        $this->method($this->configData, 'slice', $routeConfig, array('route'));
+        $this->method($this->configData, 'slice', $routeConfig, array('route'), 2);
         $this->method($routeConfig, 'get', 'group', array('type', 'pattern'), 0);
     }
     

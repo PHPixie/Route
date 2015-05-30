@@ -9,13 +9,13 @@ class Match
     
     public function __construct($routePath = null, $attributes = array())
     {
-        $this->routePath       = $routePath;
+        $this->routePath  = $routePath;
         $this->attributes = $attributes;
     }
     
-    public function path()
+    public function routePath()
     {
-        return $this->path;
+        return $this->routePath;
     }
     
     public function attributes()
@@ -23,25 +23,25 @@ class Match
         return $this->attributes;
     }
     
-    public function popPath()
+    public function popRoutePath()
     {
-        if($this->path === null) {
-            throw new \PHPixie\Router\Exception("Path is empty");
+        if($this->routePath === null) {
+            throw new \PHPixie\Router\Exception("Route path is empty");
         }
         
-        $parts = explode('.', $this->path, 2);
+        $parts = explode('.', $this->routePath, 2);
         if(count($parts) === 1) {
-            $this->path = null;
+            $this->routePath = null;
             return $parts[0];
         }
         
-        $this->path = $parts[1];
+        $this->routePath = $parts[1];
         return $parts[0];
     }
     
-    public function prependPath($path)
+    public function prependRoutePath($routePath)
     {
-        $this->path = $path.'.'.$this->path;
+        $this->routePath = $routePath.'.'.$this->routePath;
     }
     
     public function prependAttributes($attributes)

@@ -26,7 +26,9 @@ class Pattern
             $this->pattern
         );
         
-        $parameterNames = array();
+        $parameterNames    = array();
+        $parameterPatterns = $this->parameterPatterns;
+        
         $this->regex = preg_replace_callback(
             '#<(.*?)>#',
             function($matches) use($parameterPatterns, &$parameterNames) {
@@ -71,8 +73,6 @@ class Pattern
     
     public function generate($parameters)
     {
-        $parameters = array_merge($this->defaults, $parameters);
-        
         $search  = array();
         $replace = array();
         foreach($parameters as $key => $value) {
@@ -82,8 +82,8 @@ class Pattern
         
         $remove = array('(', ')', '//');
         foreach($remove as $string) {
-            $search[]= $remove;
-        }        
+            $search[]= $string;
+        }
         
         $string = str_replace($search, $replace, $this->pattern);
         

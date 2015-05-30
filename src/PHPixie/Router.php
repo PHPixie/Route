@@ -6,9 +6,13 @@ class Router
 {
     protected $builder;
     
-    public function __construct($configData)
+    public function __construct($configData, $httpContextContainer = NULL, $routeRegistry = null)
     {
-        $this->builder = $this->buildBuilder($configData);
+        $this->builder = $this->buildBuilder(
+            $configData,
+            $httpContextContainer,
+            $routeRegistry
+        );
     }
     
     public function match($serverRequest = null)
@@ -41,8 +45,8 @@ class Router
         return $this->builder;
     }
     
-    protected function buildBuilder($configData)
+    protected function buildBuilder($configData, $httpContextContainer, $routeRegistry)
     {
-        return new Router\Builder($configData);
+        return new Router\Builder($configData, $httpContextContainer, $routeRegistry);
     }
 }

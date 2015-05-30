@@ -33,6 +33,19 @@ class MountTest extends \PHPixie\Test\Testcase
     }
     
     /**
+     * @covers ::route
+     * @covers ::<protected>
+     */
+    public function testRoute()
+    {
+        $route = $this->prepareRoute();
+        
+        for($i = 0; $i < 2; $i++) {
+            $this->assertSame($route, $this->route->route());
+        }
+    }
+    
+    /**
      * @covers ::match
      * @covers ::<protected>
      */

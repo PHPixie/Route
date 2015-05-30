@@ -5,11 +5,16 @@ namespace PHPixie\Router;
 class Builder
 {
     protected $configData;
+    protected $httpContextContainer;
+    protected $routeRegistry;
+    
     protected $instances = array();
     
-    public function __construct($configData)
+    public function __construct($configData, $httpContextContainer = null, $routeRegistry = null)
     {
-        $this->configData = $configData;
+        $this->configData           = $configData;
+        $this->httpContextContainer = $httpContextContainer;
+        $this->routeRegistry        = $routeRegistry;
     }
     
     public function matcherPattern($pattern, $defaultParameterPattern = '.+?', $parameterPatterns = array())
@@ -78,13 +83,18 @@ class Builder
     
     protected function buildRoutes()
     {
-        return new Routes($this);
+        return new Routes(
+            $this,
+            $this->routeRegistry
+        );
     }
     
     protected function buildTranslator()
     {
-        return new Translator($this, $this->configData);
+        return new Translator(
+            $this,
+            $this->configData,
+            $this->httpContextContainer
+        );
     }
-    
-    public function getHttpContext(){}
 }

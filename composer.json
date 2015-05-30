@@ -1,7 +1,7 @@
 {
-    "name": "phpixie/template",
-    "description": "Templating library for PHPixie",
-    "keywords": ["templating", "template"],
+    "name": "phpixie/route",
+    "description": "Routing library for PHPixie",
+    "keywords": ["routing", "route"],
     "homepage": "http://phpixie.com",
     "type": "library",
     "license": "BSD",
@@ -13,10 +13,7 @@
         }
     ],
     "require": {
-        "phpixie/http-processors": "3.*@dev",
-        "phpixie/template": "3.*@dev",
         "phpixie/slice": "3.*@dev",
-        "phpixie/processors": "3.*@dev",
         "phpixie/http": "3.*@dev",
         "psr/http-message": "1.*@dev"
     },

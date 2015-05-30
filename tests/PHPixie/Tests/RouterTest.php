@@ -8,6 +8,8 @@ namespace PHPixie\Tests;
 class RouterTest extends \PHPixie\Test\Testcase
 {
     protected $configData;
+    protected $httpContextContainer;
+    protected $routeRegistry;
     
     protected $router;
     
@@ -17,7 +19,9 @@ class RouterTest extends \PHPixie\Test\Testcase
     
     public function setUp()
     {
-        $this->configData = $this->getSliceData();
+        $this->configData           = $this->getSliceData();
+        $this->httpContextContainer = $this->quickMock('\PHPixie\HTTP\Context\Container');
+        $this->routeRegistry        = $this->quickMock('\PHPixie\Router\Routes\Registry');
         
         $this->router = $this->getMockBuilder('\PHPixie\Router')
             ->setMethods(array('buildBuilder'))
@@ -27,10 +31,14 @@ class RouterTest extends \PHPixie\Test\Testcase
         $this->builder = $this->quickMock('\PHPixie\Router\Builder');
         $this->method($this->router, 'buildBuilder', $this->builder, array(
             $this->configData,
+            $this->httpContextContainer,
+            $this->routeRegistry
         ), 0);
         
         $this->router->__construct(
-            $this->configData
+            $this->configData,
+            $this->httpContextContainer,
+            $this->routeRegistry
         );
         
         $this->routes = $this->quickMock('\PHPixie\Router\Routes');
@@ -140,14 +148,27 @@ class RouterTest extends \PHPixie\Test\Testcase
     public function testBuildBuilder()
     {
         $router = new \PHPixie\Router(
+            $this->configData,
+            $this->httpContextContainer,
+            $this->routeRegistry
+        );
+        
+        $this->assertInstance($router->builder(), '\PHPixie\Router\Builder', array(
+            'configData'           => $this->configData,
+            'httpContextContainer' => $this->httpContextContainer,
+            'routeRegistry'        => $this->routeRegistry
+        ));
+        
+        $router = new \PHPixie\Router(
             $this->configData
         );
         
-        $builder = $router->builder();
-        
-        $this->assertInstance($builder, '\PHPixie\Router\Builder', array(
-            'configData' => $this->configData,
+        $this->assertInstance($router->builder(), '\PHPixie\Router\Builder', array(
+            'configData'           => $this->configData,
+            'httpContextContainer' => NULL,
+            'routeRegistry'        => null
         ));
+
     }
     
     protected function getSliceData()

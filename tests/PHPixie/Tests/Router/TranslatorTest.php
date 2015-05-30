@@ -3,11 +3,12 @@
 namespace PHPixie\Tests\Router;
 
 /**
- * @coversDefaultClass \PHPixie\Router\Transator
+ * @coversDefaultClass \PHPixie\Router\Translator
  */
 class TranslatorTest extends \PHPixie\Test\Testcase
 {
     protected $builder;
+    protected $httpContextContainer;
     
     protected $translator;
     
@@ -19,24 +20,14 @@ class TranslatorTest extends \PHPixie\Test\Testcase
     
     public function setUp()
     {
-        $this->builder = $this->quickMock('\PHPixie\Router\Builder');
-        $configData = $this->getSliceData();
-        
-        $this->method($configData, 'get', $this->basePath, array('basePath', '/'), 0);
-        $this->method($configData, 'get', $this->baseHost, array('baseHost', ''), 1);
-        
-        $routeConfig = $this->getSliceData();
-        $this->method($configData, 'slice', $routeConfig, array('route'), 2);
-        
-        $this->routes = $this->quickMock('\PHPixie\Router\Routes');
-        $this->method($this->builder, 'routes', $this->routes, array(), 0);
-        
-        $this->route = $this->quickMock('\PHPixie\Router\Routes\Route');
-        $this->method($this->routes, 'buildFromConfig', $this->route, array($routeConfig), 0);
+        $this->builder              = $this->quickMock('\PHPixie\Router\Builder');
+        $this->httpContextContainer = $this->quickMock('\PHPixie\HTTP\Context\Container');
+        $configData                 = $this->prepareConfigData();
         
         $this->translator = new \PHPixie\Router\Translator(
             $this->builder,
-            $configData
+            $configData,
+            $this->httpContextContainer
         );
     }
     
@@ -67,14 +58,8 @@ class TranslatorTest extends \PHPixie\Test\Testcase
      */
     public function testGeneratePath()
     {
-        $routePath  = 'pixie.trixie';
-        $attributes = array('t' => 1);
-        
-        $fragment = $this->prepareGenerateFragment($routePath, $attributes);
-        $this->method($fragment, 'path', 'pixie', array(), 0);
-        
-        $generated = $this->translator->generatePath($routePath, $attributes);
-        $this->assertSame($this->basePath.'pixie', $generated);
+        $this->generatePathTest();
+        $this->generatePathTest(true);
     }
     
     /**
@@ -85,19 +70,41 @@ class TranslatorTest extends \PHPixie\Test\Testcase
     {
         $this->generateUriTest();
         $this->generateUriTest(true);
+        $this->generateUriTest(true, true);
+        $this->generateUriTest(true, true, true);
+    }
+    
+    /**
+     * @covers ::match
+     * @covers ::generateUri
+     * @covers ::<protected>
+     */
+    public function testNoHttpContextException()
+    {
+        $configData = $this->prepareConfigData();
+        $translator = new \PHPixie\Router\Translator(
+            $this->builder,
+            $configData
+        );
+        
+        $this->assertException(function() use($translator) {
+            $translator->match();
+        }, '\PHPixie\Router\Exception');
+        
+        $this->assertException(function() use($translator) {
+            $translator->generateUri('pixie');
+        }, '\PHPixie\Router\Exception');
     }
     
     protected function matchTest($hostValid = false, $pathValid = false, $withServerRequest = false)
     {
         $serverRequest = $this->getServerRequest();
         
-        $builderAt = 0;
-        
         if(!$withServerRequest) {
-            $this->prepareCurrentServerRequest($serverRequest, $builderAt);
+            $this->prepareCurrentServerRequest($serverRequest);
         }
         
-        $expected = $this->prepareMatchTest($serverRequest, $hostValid, $pathValid, $builderAt);
+        $expected = $this->prepareMatchTest($serverRequest, $hostValid, $pathValid);
         
         if($withServerRequest) {
             $result = $this->translator->match($serverRequest);
@@ -108,7 +115,7 @@ class TranslatorTest extends \PHPixie\Test\Testcase
         $this->assertSame($expected, $result);
     }
     
-    protected function prepareMatchTest($serverRequest, $hostValid, $pathValid, &$builderAt = 0)
+    protected function prepareMatchTest($serverRequest, $hostValid, $pathValid)
     {
         $uri = $this->getUri();
         $this->method($serverRequest, 'getUri', $uri, array(), 0);
@@ -127,27 +134,48 @@ class TranslatorTest extends \PHPixie\Test\Testcase
             'tail-path',
             'tail-host',
             $serverRequest
-        ), $builderAt++);
+        ), 0);
         
         $match = $this->getMatch();
         $this->method($this->route, 'match', $match, array($fragment), 0);
         return $match;
     }
     
-    protected function generateUriTest($withHost = false)
+    protected function generatePathTest($withAttributes = false)
     {
         $routePath  = 'pixie.trixie';
-        $attributes = array('t' => 1);
+        $attributes = $withAttributes ? array('t' => 1) : array();
         
-        $builderAt = 0;
+        $fragment = $this->prepareGenerateFragment($routePath, $attributes);
+        $this->method($fragment, 'path', 'pixie', array(), 0);
         
-        $fragment = $this->prepareGenerateFragment($routePath, $attributes, $withHost, $builderAt);
+        $params = array($routePath);
+        if($withAttributes) {
+            $params[] = $attributes;
+        }
+        $generated = call_user_func_array(array($this->translator, 'generatePath'), $params);
+        $this->assertSame($this->basePath.'pixie', $generated);
+    }
+    
+    protected function generateUriTest(
+        $withAttributes    = false,
+        $withHost          = false,
+        $withServerRequest = false
+    )
+    {
+        $routePath  = 'pixie.trixie';
+        
+        $attributes = $withAttributes ? array('t' => 1) : array();
         
         $serverRequest = $this->getServerRequest();
-        $this->prepareCurrentServerRequest($serverRequest, $builderAt);
-
+        if(!$withServerRequest) {
+            $this->prepareCurrentServerRequest($serverRequest);
+        }
+        
         $uri = $this->getUri();
         $this->method($serverRequest, 'getUri', $uri, array(), 0);
+        
+        $fragment = $this->prepareGenerateFragment($routePath, $attributes, $withHost);
         
         $this->method($fragment, 'path', 'pixie-path', array(), 0);
         $pathUri = $this->getUri();
@@ -161,33 +189,61 @@ class TranslatorTest extends \PHPixie\Test\Testcase
             $uri = $hostUri;
         }
         
-        if($withHost) {
-            $result = $this->translator->generateUri($routePath, $attributes, $withHost);
-        }else{
-            $result = $this->translator->generateUri($routePath, $attributes);
+        $params = array($routePath);
+        if($withAttributes) {
+            $params[] = $attributes;
         }
+        
+        if($withHost) {
+            $params[] = $withHost;
+        }
+        
+        if($withServerRequest) {
+            $params[] = $serverRequest;
+        }
+        
+        $result = call_user_func_array(array($this->translator, 'generateUri'), $params);
         
         $this->assertSame($uri, $result);
     }
     
-    protected function prepareGenerateFragment($routePath, $attributes, $withHost = false, &$builderAt = 0)
+    protected function prepareGenerateFragment($routePath, $attributes, $withHost = false)
     {
         $match = $this->getMatch();
         $this->method($this->builder, 'translatorMatch', $match, array(
             $routePath,
             $attributes
-        ), $builderAt++);
+        ), 0);
         
         $fragment = $this->getFragment();
         $this->method($this->route, 'generate', $fragment, array($match, $withHost), 0);
         return $fragment;
     }
     
-    protected function prepareCurrentServerRequest($serverRequest, &$builderAt = 0)
+    protected function prepareCurrentServerRequest($serverRequest)
     {
-        $context = $this->quickMock('\PHPixie\HTTP\Context', array('serverRequest'));
-        $this->method($this->builder, 'getHttpContext', $context, array(), $builderAt++);
+        $context = $this->quickMock('\PHPixie\HTTP\Context');
+        $this->method($this->httpContextContainer, 'httpContext', $context, array(), 0);
         $this->method($context, 'serverRequest', $serverRequest, array(), 0);
+    }
+    
+    protected function prepareConfigData()
+    {
+        $configData = $this->getSliceData();
+        
+        $this->method($configData, 'get', $this->basePath, array('basePath', '/'), 0);
+        $this->method($configData, 'get', $this->baseHost, array('baseHost', ''), 1);
+        
+        $routeConfig = $this->getSliceData();
+        $this->method($configData, 'slice', $routeConfig, array('route'), 2);
+        
+        $this->routes = $this->quickMock('\PHPixie\Router\Routes');
+        $this->method($this->builder, 'routes', $this->routes, array(), 0);
+        
+        $this->route = $this->quickMock('\PHPixie\Router\Routes\Route');
+        $this->method($this->routes, 'buildFromConfig', $this->route, array($routeConfig), 0);
+        
+        return $configData;
     }
     
     protected function getSliceData()

@@ -7,7 +7,7 @@ namespace PHPixie\Tests\Router\Translator;
  */
 class MatchTest extends \PHPixie\Test\Testcase
 {
-    protected $path = 'pixie.trixie.stella';
+    protected $routePath = 'pixie.trixie.stella';
     protected $attributes = array(
         'a' => 1,
         'b' => 2
@@ -18,7 +18,7 @@ class MatchTest extends \PHPixie\Test\Testcase
     public function setUp()
     {
         $this->match = new \PHPixie\Router\Translator\Match(
-            $this->path,
+            $this->routePath,
             $this->attributes
         );
     }
@@ -33,12 +33,12 @@ class MatchTest extends \PHPixie\Test\Testcase
     }
     
     /**
-     * @covers ::path
+     * @covers ::routePath
      * @covers ::<protected>
      */
-    public function testPath()
+    public function testRoutePath()
     {
-        $this->assertSame($this->path, $this->match->path());
+        $this->assertSame($this->routePath, $this->match->routePath());
     }
     
     /**
@@ -51,33 +51,34 @@ class MatchTest extends \PHPixie\Test\Testcase
     }
     
     /**
-     * @covers ::popPath
+     * @covers ::popRoutePath
      * @covers ::<protected>
      */
-    public function testPopPath()
+    public function testPopRoutePath()
     {
-        $exploded = explode('.', $this->path);
+        $exploded = explode('.', $this->routePath);
         $last = count($exploded) - 1;
         for($i = 0; $i <= $last; $i++) { 
-            $this->assertSame(array_shift($exploded), $this->match->popPath());
+            $this->assertSame(array_shift($exploded), $this->match->popRoutePath());
             $path = $i == $last ? null : implode('.', $exploded);
-            $this->assertSame($path, $this->match->path());
+            $this->assertSame($path, $this->match->routePath());
         }
         
         $match = $this->match;
+        
         $this->assertException(function() use($match) {
-            $match->popPath();
+            $match->popRoutePath();
         }, '\PHPixie\Router\Exception');
     }
     
     /**
-     * @covers ::prependPath
+     * @covers ::prependRoutePath
      * @covers ::<protected>
      */
-    public function testPrependPath()
+    public function testPrependRoutePath()
     {
-        $this->match->prependPath('fairy');
-        $this->assertSame('fairy.'.$this->path, $this->match->path());
+        $this->match->prependRoutePath('fairy');
+        $this->assertSame('fairy.'.$this->routePath, $this->match->routePath());
     }
     
     /**

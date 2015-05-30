@@ -8,18 +8,26 @@ namespace PHPixie\Tests\Router;
 class RoutesTest extends \PHPixie\Test\Testcase
 {
     protected $builder;
+    protected $routeRegistry;
+    
     protected $routes;
     
     protected $classMap = array(
         'group'   => '\PHPixie\Router\Routes\Route\Group',
+        'mount'  => '\PHPixie\Router\Routes\Route\Mount',
         'pattern' => '\PHPixie\Router\Routes\Route\Pattern\Implementation',
         'prefix'  => '\PHPixie\Router\Routes\Route\Pattern\Prefix'
     );
     
     public function setUp()
     {
-        $this->builder = $this->quickMock('\PHPixie\Router\Builder');
-        $this->routes  = new \PHPixie\Router\Routes($this->builder);
+        $this->builder       = $this->quickMock('\PHPixie\Router\Builder');
+        $this->routeRegistry = $this->quickMock('\PHPixie\Router\Routes\Registry');
+        
+        $this->routes = new \PHPixie\Router\Routes(
+            $this->builder,
+            $this->routeRegistry
+        );
     }
     
     /**
@@ -74,6 +82,26 @@ class RoutesTest extends \PHPixie\Test\Testcase
             'builder'     => $this->builder,
             'configData'  => $configData
         ));
+    }
+    
+    /**
+     * @covers ::mount
+     * @covers ::<protected>
+     */
+    public function testMount()
+    {
+        $configData = $this->getSliceData();
+        
+        $pattern = $this->routes->mount($configData);
+        $this->assertInstance($pattern, $this->classMap['mount'], array(
+            'routeRegistry' => $this->routeRegistry,
+            'configData'    => $configData
+        ));
+        
+        $routes = new \PHPixie\Router\Routes($this->builder);
+        $this->assertException(function() use($routes, $configData){
+            $routes->mount($configData);
+        }, '\PHPixie\Router\Exception');
     }
     
     /**

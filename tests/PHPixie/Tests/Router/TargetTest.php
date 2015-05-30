@@ -32,6 +32,15 @@ class TargetTest extends \PHPixie\Test\Testcase
     }
     
     /**
+     * @covers ::routePath
+     * @covers ::<protected>
+     */
+    public function testRoutePath()
+    {
+        $this->assertSame($this->routePath, $this->target->routePath());
+    }
+    
+    /**
      * @covers ::path
      * @covers ::<protected>
      */
@@ -53,13 +62,27 @@ class TargetTest extends \PHPixie\Test\Testcase
     public function testUri()
     {
         $attributes = array('t' => 1);
+        $serverRequest = $this->quickMock('\Psr\Http\Message\ServerRequestInterface');
         
         $uri = $this->getUri();
-        $this->method($this->translator, 'generateUri', $uri, array($this->routePath, $attributes, true), 0);
-        $this->assertSame($uri, $this->target->uri($attributes, true));
+        $this->method(
+            $this->translator,
+            'generateUri',
+            $uri,
+            array($this->routePath, $attributes, true, $serverRequest),
+            0
+        );
+        
+        $this->assertSame($uri, $this->target->uri($attributes, true, $serverRequest));
         
         $uri = $this->getUri();
-        $this->method($this->translator, 'generateUri', $uri, array($this->routePath, array(), false), 0);
+        $this->method(
+            $this->translator,
+            'generateUri',
+            $uri,
+            array($this->routePath, array(), false, null),
+            0
+        );
         $this->assertSame($uri, $this->target->uri());
     }
     

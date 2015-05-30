@@ -91,7 +91,7 @@ class GroupTest extends \PHPixie\Test\Testcase
             $this->method($route, 'match', $return, array($fragment), 0);
         }
         
-        $this->method($match, 'prepend', null, array($this->routeNames[1]), 0);
+        $this->method($match, 'prependRoutePath', null, array($this->routeNames[1]), 0);
         
         $this->assertSame($match, $this->group->match($fragment));
     }
@@ -135,7 +135,7 @@ class GroupTest extends \PHPixie\Test\Testcase
         $match    = $this->getMatch();
         $fragment = $this->getFragment();
         
-        $this->method($match, 'popPath', $routeName, array(), 0);
+        $this->method($match, 'popRoutePath', $routeName, array(), 0);
         
         $params = array($match);
         if($withHost) {
@@ -157,7 +157,7 @@ class GroupTest extends \PHPixie\Test\Testcase
         $this->method($this->configData, 'slice', $slice, array($name), $configAt++);
         
         $route = $this->quickMock('\PHPixie\Router\Routes\Route');
-        $this->method($this->routes, 'buildRoute', $route, array($slice), $routesAt++);
+        $this->method($this->routes, 'buildFromConfig', $route, array($slice), $routesAt++);
         
         return $route;
     }

@@ -5,16 +5,19 @@ namespace PHPixie\Router;
 class Routes
 {
     protected $builder;
+    protected $routeRegistry;
     
     protected $routes = array(
         'group',
+        'mount',
         'pattern',
         'prefix'
     );
     
-    public function __construct($builder)
+    public function __construct($builder, $routeRegistry = null)
     {
-        $this->builder = $builder;
+        $this->builder       = $builder;
+        $this->routeRegistry = $routeRegistry;
     }
     
     public function group($configData)
@@ -37,6 +40,18 @@ class Routes
     {
         return new Routes\Route\Pattern\Prefix(
             $this->builder,
+            $configData
+        );
+    }
+    
+    public function mount($configData)
+    {
+        if($this->routeRegistry === null) {
+            throw new \PHPixie\Router\Exception("Route registry was not specified");
+        }
+        
+        return new Routes\Route\Mount(
+            $this->routeRegistry,
             $configData
         );
     }

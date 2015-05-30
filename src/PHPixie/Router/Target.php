@@ -23,8 +23,8 @@ class Target
         return $this->translator->generatePath($this->routePath, $attributes);
     }
     
-    public function uri($attributes = array(), $withHost = false)
+    public function uri($attributes = array(), $withHost = false, $serverRequest = null)
     {
-        return $this->translator->generateUri($this->routePath, $attributes, $withHost);
+        return $this->translator->generateUri($this->routePath, $attributes, $withHost, $serverRequest);
     }
 }

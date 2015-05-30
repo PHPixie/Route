@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
     "hash": "0bc45b0fc76667328ad7d3af7d2759d8",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPixie/HTTP.git",
-                "reference": "f5db5a4c10be654c395550812e8dbecc341efd32"
+                "reference": "5cd4db4d4e92df79f5670913f728fe49563500dd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPixie/HTTP/zipball/f5db5a4c10be654c395550812e8dbecc341efd32",
-                "reference": "f5db5a4c10be654c395550812e8dbecc341efd32",
+                "url": "https://api.github.com/repos/PHPixie/HTTP/zipball/5cd4db4d4e92df79f5670913f728fe49563500dd",
+                "reference": "5cd4db4d4e92df79f5670913f728fe49563500dd",
                 "shasum": ""
             },
             "require": {
@@ -56,7 +56,7 @@
                 "http",
                 "psr-7"
             ],
-            "time": "2015-04-26 13:42:33"
+            "time": "2015-05-30 13:03:15"
         },
         {
             "name": "phpixie/http-processors",

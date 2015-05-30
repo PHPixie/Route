@@ -32,7 +32,7 @@ class Group
         
         if($this->routeMap[$name] === null) {
             $configData = $this->configData->slice($name);
-            $this->routeMap[$name] = $this->routes->buildRoute($configData);
+            $this->routeMap[$name] = $this->routes->buildFromConfig($configData);
         }
         
         return $this->routeMap[$name];
@@ -46,7 +46,7 @@ class Group
             $route = $this->get($name);
             $match = $route->match($segment);
             if($match !== null) {
-                $match->prependPath($name);
+                $match->prependRoutePath($name);
                 break;
             }
         }
@@ -56,7 +56,7 @@ class Group
     
     public function generate($match, $withHost = false)
     {
-        $name  = $match->popPath();
+        $name  = $match->popRoutePath();
         $route = $this->get($name);
         return $route->generate($match, $withHost);
     }
