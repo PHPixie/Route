@@ -5,22 +5,20 @@ namespace PHPixie\Router;
 class Translator
 {
     protected $builder;
+    protected $route;
     protected $httpContextContainer;
     
     protected $basePath;
     protected $baseHost;
-    protected $route;
     
-    public function __construct($builder, $configData, $httpContextContainer = null)
+    public function __construct($builder, $route, $configData, $httpContextContainer = null)
     {
         $this->builder              = $builder;
+        $this->route                = $route;
         $this->httpContextContainer = $httpContextContainer;
         
         $this->basePath = $configData->get('basePath', '/');
         $this->baseHost = $configData->get('baseHost', '');
-        
-        $routeConfig = $configData->slice('route');
-        $this->route = $this->builder->routes()->buildFromConfig($routeConfig);
     }
     
     public function match($serverRequest = null)

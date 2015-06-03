@@ -4,17 +4,23 @@ namespace PHPixie\Router;
 
 class Builder
 {
-    protected $configData;
-    protected $httpContextContainer;
-    protected $routeRegistry;
-    
     protected $instances = array();
     
-    public function __construct($configData, $httpContextContainer = null, $routeRegistry = null)
+    public function __construct()
     {
         $this->configData           = $configData;
         $this->httpContextContainer = $httpContextContainer;
         $this->routeRegistry        = $routeRegistry;
+    }
+    
+    public function translator($configData, $route, $httpContextContainer = null)
+    {
+        return new Translator(
+            $this,
+            $configData,
+            $route,
+            $httpContextContainer
+        );
     }
     
     public function matcherPattern($pattern, $defaultParameterPattern = '.+?', $parameterPatterns = array())
@@ -61,11 +67,6 @@ class Builder
         return $this->instance('routes');
     }
     
-    public function translator()
-    {
-        return $this->instance('translator');
-    }
-    
     protected function instance($name)
     {
         if(!array_key_exists($name, $this->instances)) {
@@ -86,15 +87,6 @@ class Builder
         return new Routes(
             $this,
             $this->routeRegistry
-        );
-    }
-    
-    protected function buildTranslator()
-    {
-        return new Translator(
-            $this,
-            $this->configData,
-            $this->httpContextContainer
         );
     }
 }

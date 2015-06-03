@@ -7,6 +7,14 @@ namespace PHPixie\Tests\Router\Routes\Route\Pattern;
  */
 class PrefixTest extends \PHPixie\Tests\Router\Routes\Route\PatternTest
 {
+    protected $routeBuilder;
+    
+    public function setUp()
+    {
+        $this->routeBuilder = $this->quickMock('\PHPixie\Router\Routes\Builder');
+        parent::setUp();
+    }
+    
     /**
      * @covers ::match
      * @covers ::<protected>
@@ -39,14 +47,11 @@ class PrefixTest extends \PHPixie\Tests\Router\Routes\Route\PatternTest
      */
     public function testRoute()
     {
-        $routes = $this->quickMock('\PHPixie\Router\Routes');
-        $this->method($this->builder, 'routes', $routes, array(), 0);
-        
         $routeConfig = $this->getSliceData();
         $this->method($this->configData, 'slice', $routeConfig, array('route'), 0);
         
         $route = $this->getRoute();
-        $this->method($routes, 'buildFromConfig', $route, array($routeConfig), 0);
+        $this->method($this->routeBuilder, 'buildFromConfig', $route, array($routeConfig), 0);
         
         for($i = 0; $i < 2; $i++) {
             $this->assertSame($route, $this->route->route());
@@ -225,6 +230,7 @@ class PrefixTest extends \PHPixie\Tests\Router\Routes\Route\PatternTest
     {
         return new \PHPixie\Router\Routes\Route\Pattern\Prefix(
             $this->builder,
+            $this->routeBuilder,
             $this->configData
         );
     }
@@ -236,6 +242,7 @@ class PrefixTest extends \PHPixie\Tests\Router\Routes\Route\PatternTest
             $methods,
             array(
                 $this->builder,
+                $this->routeBuilder,
                 $this->configData
             )
         );

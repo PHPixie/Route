@@ -1,9 +1,9 @@
 <?php
 
-namespace PHPixie\Tests\Router;
+namespace PHPixie\Tests\Router\Translator;
 
 /**
- * @coversDefaultClass \PHPixie\Router\Target
+ * @coversDefaultClass \PHPixie\Router\Translator\Target
  */
 class TargetTest extends \PHPixie\Test\Testcase
 {
@@ -16,7 +16,7 @@ class TargetTest extends \PHPixie\Test\Testcase
     {
         $this->translator = $this->quickMock('\PHPixie\Router\Translator');
         
-        $this->target  = new \PHPixie\Router\Target(
+        $this->target  = new \PHPixie\Router\Translator\Target(
             $this->translator,
             $this->routePath
         );

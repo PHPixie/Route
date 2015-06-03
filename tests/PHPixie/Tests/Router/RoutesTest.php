@@ -45,12 +45,13 @@ class RoutesTest extends \PHPixie\Test\Testcase
      */
     public function testGroup()
     {
-        $configData = $this->getSliceData();
+        $configData   = $this->getSliceData();
+        $routeBuilder = $this->getRouteBuilder();
         
-        $group = $this->routes->group($configData);
+        $group = $this->routes->group($routeBuilder, $configData);
         $this->assertInstance($group, $this->classMap['group'], array(
-            'routes'     => $this->routes,
-            'configData' => $configData
+            'routeBuilder' => $routeBuilder,
+            'configData'   => $configData
         ));
     }
     
@@ -75,12 +76,13 @@ class RoutesTest extends \PHPixie\Test\Testcase
      */
     public function testPrefix()
     {
-        $configData = $this->getSliceData();
+        $configData   = $this->getSliceData();
+        $routeBuilder = $this->getRouteBuilder();
         
-        $pattern = $this->routes->prefix($configData);
+        $pattern = $this->routes->prefix($routeBuilder, $configData);
         $this->assertInstance($pattern, $this->classMap['prefix'], array(
-            'builder'     => $this->builder,
-            'configData'  => $configData
+            'routeBuilder' => $routeBuilder,
+            'configData'   => $configData
         ));
     }
     
@@ -90,44 +92,63 @@ class RoutesTest extends \PHPixie\Test\Testcase
      */
     public function testMount()
     {
-        $configData = $this->getSliceData();
+        $configData    = $this->getSliceData();
+        $routeRegistry = $this->getRouteRegistry();
         
-        $pattern = $this->routes->mount($configData);
+        $pattern = $this->routes->mount($routeRegistry, $configData);
         $this->assertInstance($pattern, $this->classMap['mount'], array(
-            'routeRegistry' => $this->routeRegistry,
+            'routeRegistry' => $routeRegistry,
             'configData'    => $configData
         ));
-        
-        $routes = new \PHPixie\Router\Routes($this->builder);
-        $this->assertException(function() use($routes, $configData){
-            $routes->mount($configData);
-        }, '\PHPixie\Router\Exception');
     }
     
     /**
-     * @covers ::buildFromConfig
+     * @covers ::builder
      * @covers ::<protected>
      */
-    public function testBuildFromConfig()
+    public function testBuilder()
     {
-        foreach($this->classMap as $type => $class) {
-            $configData = $this->getSliceData();
-            $this->method($configData, 'get', $type, array('type'), 0);
-            $route = $this->routes->buildFromConfig($configData);
-            $this->assertInstance($route, $class);
-        }
+        $routeRegistry = $this->getRouteRegistry();
+
+        $builder = $this->routes->builder($routeRegistry);
+        $this->assertInstance($builder, '\PHPixie\Router\Routes\Builder', array(
+            'routeRegistry' => $routeRegistry
+        ));
         
-        $routes = $this->routes;
-        $configData = $this->getSliceData();
-        $this->method($configData, 'get', 'pixie', array('type'), 0);
+        $builder = $this->routes->builder();
+        $this->assertInstance($builder, '\PHPixie\Router\Routes\Builder', array(
+            'routeRegistry' => null
+        ));
+    }
+    
+    /**
+     * @covers ::configRegistry
+     * @covers ::<protected>
+     */
+    public function testConfigRegistry()
+    {
+        $routeBuilder = $this->getRouteBuilder();
+        $configData   = $this->getSliceData();
         
-        $this->assertException(function() use($routes, $configData){
-            $routes->buildFromConfig($configData);
-        }, '\PHPixie\Router\Exception');
+        $routeRegistry = $this->routes->configRegistry($routeBuilder, $configData);
+        $this->assertInstance($routeRegistry, '\PHPixie\Router\Routes\Registry\Config', array(
+            'routeBuilder' => $routeBuilder,
+            'configData'   => $configData
+        ));
     }
     
     protected function getSliceData()
     {
-        return $this->abstractMock('\PHPixie\Slice\Data');
+        return $this->quickMock('\PHPixie\Slice\Data');
+    }
+    
+    protected function getRouteBuilder()
+    {
+        return $this->quickMock('\PHPixie\Router\Routes\Builder');
+    }
+    
+    protected function getRouteRegistry()
+    {
+        return $this->quickMock('\PHPixie\Router\Routes\Registry');
     }
 }

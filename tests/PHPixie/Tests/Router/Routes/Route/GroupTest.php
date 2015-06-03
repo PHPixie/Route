@@ -7,7 +7,7 @@ namespace PHPixie\Tests\Router\Routes\Route;
  */
 class GroupTest extends \PHPixie\Test\Testcase
 {
-    protected $routes;
+    protected $routeBuilder;
     protected $configData;
     
     protected $group;
@@ -16,11 +16,11 @@ class GroupTest extends \PHPixie\Test\Testcase
     
     public function setUp()
     {
-        $this->routes      = $this->quickMock('\PHPixie\Router\Routes');
-        $this->configData  = $this->getSliceData();
+        $this->routeBuilder = $this->quickMock('\PHPixie\Router\Routes\Builder');
+        $this->configData   = $this->getSliceData();
         
         $this->group = new \PHPixie\Router\Routes\Route\Group(
-            $this->routes,
+            $this->routeBuilder,
             $this->configData
         );
     }
@@ -102,7 +102,7 @@ class GroupTest extends \PHPixie\Test\Testcase
      */
     public function testNotMatched()
     {
-        $configAt       = 0;
+        $configAt = 0;
         $routesAt = 0;
         $fragment       = $this->getFragment();
         
@@ -157,7 +157,7 @@ class GroupTest extends \PHPixie\Test\Testcase
         $this->method($this->configData, 'slice', $slice, array($name), $configAt++);
         
         $route = $this->quickMock('\PHPixie\Router\Routes\Route');
-        $this->method($this->routes, 'buildFromConfig', $route, array($slice), $routesAt++);
+        $this->method($this->routeBuilder, 'buildFromConfig', $route, array($slice), $routesAt++);
         
         return $route;
     }

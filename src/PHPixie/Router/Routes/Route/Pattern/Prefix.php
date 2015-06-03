@@ -4,7 +4,14 @@ namespace PHPixie\Router\Routes\Route\Pattern;
 
 class Prefix extends \PHPixie\Router\Routes\Route\Pattern
 {
+    protected $routeBuilder;
     protected $route;
+    
+    public function __construct($builder, $routeBuilder, $configData)
+    {
+        $this->routeBuilder = $routeBuilder;
+        parent::__construct($builder, $configData);
+    }
     
     public function match($fragment)
     {
@@ -77,8 +84,7 @@ class Prefix extends \PHPixie\Router\Routes\Route\Pattern
     {
         if($this->route === null) {
             $routeConfig = $this->configData->slice('route');
-            $routes = $this->builder->routes();
-            $this->route = $routes->buildFromConfig($routeConfig);
+            $this->route = $this->routeBuilder->buildFromConfig($routeConfig);
         }
         
         return $this->route;

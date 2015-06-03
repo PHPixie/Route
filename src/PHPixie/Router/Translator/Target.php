@@ -1,6 +1,6 @@
 <?php
 
-namespace PHPixie\Router;
+namespace PHPixie\Router\Translator;
 
 class Target
 {

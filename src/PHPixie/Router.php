@@ -6,7 +6,7 @@ class Router
 {
     protected $builder;
     
-    public function __construct($configData, $httpContextContainer = NULL, $routeRegistry = null)
+    public function __construct($configData)
     {
         $this->builder = $this->buildBuilder(
             $configData,
@@ -35,9 +35,20 @@ class Router
         return $this->builder->target($routePath);
     }
     
-    public function buildRouteFromConfig($configData)
+    public function translator($route)
+    
+    public function buildRoute($configData, $routeRegistry = null)
     {
-        return $this->builder->routes()->buildFromConfig($configData);
+        $routes  = $this->builder->routes();
+        $builder = $routes->builder($routeRegistry);
+        return $builder->buildFromConfig($configData);
+    }
+    
+    public function configRouteRegistry($configData, $routeRegistry = null)
+    {
+        $routes  = $this->builder->routes();
+        $builder = $routes->builder($routeRegistry);
+        return $routes->configRegistry($builder, $configData);
     }
     
     public function builder()

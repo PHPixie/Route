@@ -7,23 +7,16 @@ class Routes
     protected $builder;
     protected $routeRegistry;
     
-    protected $routes = array(
-        'group',
-        'mount',
-        'pattern',
-        'prefix'
-    );
-    
     public function __construct($builder, $routeRegistry = null)
     {
         $this->builder       = $builder;
         $this->routeRegistry = $routeRegistry;
     }
     
-    public function group($configData)
+    public function group($routeBuilder, $configData)
     {
         return new Routes\Route\Group(
-            $this,
+            $routeBuilder,
             $configData
         );
     }
@@ -36,32 +29,36 @@ class Routes
         );
     }
     
-    public function prefix($configData)
+    public function prefix($routeBuilder, $configData)
     {
         return new Routes\Route\Pattern\Prefix(
             $this->builder,
+            $routeBuilder,
             $configData
         );
     }
     
-    public function mount($configData)
+    public function mount($routeRegistry, $configData)
     {
-        if($this->routeRegistry === null) {
-            throw new \PHPixie\Router\Exception("Route registry was not specified");
-        }
-        
         return new Routes\Route\Mount(
-            $this->routeRegistry,
+            $routeRegistry,
             $configData
         );
     }
     
-    public function buildFromConfig($configData) {
-        $type = $configData->get('type', 'pattern');
-        if(!in_array($type, $this->routes, true)) {
-            throw new \PHPixie\Router\Exception("Route type '$type' does not exist");
-        }
-        
-        return $this->$type($configData);
+    public function builder($routeRegistry = null)
+    {
+        return new Routes\Builder(
+            $this,
+            $routeRegistry
+        );
+    }
+    
+    public function configRegistry($routeBuilder, $configData)
+    {
+        return new Routes\Registry\Config(
+            $routeBuilder,
+            $configData
+        );
     }
 }

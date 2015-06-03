@@ -120,19 +120,6 @@ class RouterTest extends \PHPixie\Test\Testcase
     }
     
     /**
-     * @covers ::buildRouteFromConfig
-     * @covers ::<protected>
-     */
-    public function testBuildRouteFromConfig()
-    {
-        $configData = $this->getSliceData();
-        $route = $this->quickMock('\PHPixie\Router\Routes\Route');
-        
-        $this->method($this->routes, 'buildFromConfig', $route, array($configData), 0);
-        $this->assertSame($route, $this->router->buildRouteFromConfig($configData));
-    }
-    
-    /**
      * @covers ::builder
      * @covers ::<protected>
      */
@@ -168,7 +155,73 @@ class RouterTest extends \PHPixie\Test\Testcase
             'httpContextContainer' => NULL,
             'routeRegistry'        => null
         ));
-
+    }
+    
+    /**
+     * @covers ::buildRoute
+     * @covers ::<protected>
+     */
+    public function testBuildRoute()
+    {
+        $configData = $this->quickMock('\PHPixie\Slice\Data');
+        $builder    = $this->quickMock('\PHPixie\Router\Routes\Builder');
+        $route      = $this->quickMock('\PHPixie\Router\Routes\Route');
+        
+        $this->method($builder, 'buildFromConfig', $route, array($configData));
+        
+        foreach(array(false, true) as $withRouteRegistry) {
+            if($withRouteRegistry) {
+                $routeRegistry = $this->quickMock('\PHPixie\Filesystem\Locators\Registry');
+            }else{
+                $routeRegistry = null;
+            }
+            
+            $this->method($this->routes, 'builder', $builder, array($routeRegistry), 0);
+            
+            $params = array($configData);
+            if($withRouteRegistry) {
+                $params[]= $routeRegistry;
+            }
+            
+            $result = call_user_func_array(array($this->router, 'buildRoute'), $params);
+            $this->assertSame($route, $result);
+        }
+    }
+    
+    /**
+     * @covers ::configRouteRegistry
+     * @covers ::<protected>
+     */
+    public function testConfigRouteRegistry()
+    {
+        $configData     = $this->quickMock('\PHPixie\Slice\Data');
+        $builder        = $this->quickMock('\PHPixie\Router\Routes\Builder');
+        $configRegistry = $this->quickMock('\PHPixie\Router\Routes\Registry\Config');
+        
+        foreach(array(false, true) as $withRouteRegistry) {
+            if($withRouteRegistry) {
+                $routeRegistry = $this->quickMock('\PHPixie\Router\Routes\Registry');
+            }else{
+                $routeRegistry = null;
+            }
+            
+            $this->method($this->routes, 'builder', $builder, array($routeRegistry), 0);
+            $this->method(
+                $this->routes,
+                'configRegistry',
+                $configRegistry,
+                array($builder, $configData),
+                1
+            );
+            
+            $params = array($configData);
+            if($withRouteRegistry) {
+                $params[]= $routeRegistry;
+            }
+            
+            $result = call_user_func_array(array($this->router, 'configRouteRegistry'), $params);
+            $this->assertSame($configRegistry, $result);
+        }
     }
     
     protected function getSliceData()

@@ -8,6 +8,7 @@ namespace PHPixie\Tests\Router;
 class TranslatorTest extends \PHPixie\Test\Testcase
 {
     protected $builder;
+    protected $route;
     protected $httpContextContainer;
     
     protected $translator;
@@ -15,17 +16,16 @@ class TranslatorTest extends \PHPixie\Test\Testcase
     protected $basePath = 'path-base/';
     protected $baseHost = 'host-base';
     
-    protected $routes;
-    protected $route;
-    
     public function setUp()
     {
         $this->builder              = $this->quickMock('\PHPixie\Router\Builder');
+        $this->route                = $this->quickMock('\PHPixie\Router\Routes\Route');
         $this->httpContextContainer = $this->quickMock('\PHPixie\HTTP\Context\Container');
         $configData                 = $this->prepareConfigData();
         
         $this->translator = new \PHPixie\Router\Translator(
             $this->builder,
+            $this->route,
             $configData,
             $this->httpContextContainer
         );
@@ -84,6 +84,7 @@ class TranslatorTest extends \PHPixie\Test\Testcase
         $configData = $this->prepareConfigData();
         $translator = new \PHPixie\Router\Translator(
             $this->builder,
+            $this->route,
             $configData
         );
         
@@ -233,15 +234,6 @@ class TranslatorTest extends \PHPixie\Test\Testcase
         
         $this->method($configData, 'get', $this->basePath, array('basePath', '/'), 0);
         $this->method($configData, 'get', $this->baseHost, array('baseHost', ''), 1);
-        
-        $routeConfig = $this->getSliceData();
-        $this->method($configData, 'slice', $routeConfig, array('route'), 2);
-        
-        $this->routes = $this->quickMock('\PHPixie\Router\Routes');
-        $this->method($this->builder, 'routes', $this->routes, array(), 0);
-        
-        $this->route = $this->quickMock('\PHPixie\Router\Routes\Route');
-        $this->method($this->routes, 'buildFromConfig', $this->route, array($routeConfig), 0);
         
         return $configData;
     }
