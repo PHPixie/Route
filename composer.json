@@ -1,7 +1,7 @@
 {
-    "name": "phpixie/routing",
+    "name": "phpixie/route",
     "description": "Routing library for PHPixie",
-    "keywords": ["routing", "route"],
+    "keywords": ["route", "router", "routing"],
     "homepage": "http://phpixie.com",
     "type": "library",
     "license": "BSD",
