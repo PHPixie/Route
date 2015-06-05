@@ -115,42 +115,6 @@ class RouteTest extends \PHPixie\Test\Testcase
     }
     
     /**
-     * @covers ::configResolverRegistry
-     * @covers ::<protected>
-     */
-    public function testConfigResolverRegistry()
-    {
-        $configData     = $this->quickMock('\PHPixie\Slice\Data');
-        $builder        = $this->quickMock('\PHPixie\Route\Resolvers\Builder');
-        $configRegistry = $this->quickMock('\PHPixie\Route\Resolvers\Registry\Config');
-        
-        foreach(array(false, true) as $withResolverRegistry) {
-            if($withResolverRegistry) {
-                $resolverRegistry = $this->quickMock('\PHPixie\Route\Resolvers\Registry');
-            }else{
-                $resolverRegistry = null;
-            }
-            
-            $this->method($this->resolvers, 'builder', $builder, array($resolverRegistry), 0);
-            $this->method(
-                $this->resolvers,
-                'configRegistry',
-                $configRegistry,
-                array($builder, $configData),
-                1
-            );
-            
-            $params = array($configData);
-            if($withResolverRegistry) {
-                $params[]= $resolverRegistry;
-            }
-            
-            $result = call_user_func_array(array($this->resolver, 'configResolverRegistry'), $params);
-            $this->assertSame($configRegistry, $result);
-        }
-    }
-    
-    /**
      * @covers ::buildBuilder
      * @covers ::<protected>
      */

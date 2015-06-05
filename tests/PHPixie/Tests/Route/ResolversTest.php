@@ -13,7 +13,7 @@ class ResolversTest extends \PHPixie\Test\Testcase
     protected $resolvers;
     
     protected $classMap = array(
-        'group'   => '\PHPixie\Route\Resolvers\Resolver\Group',
+        'group'   => '\PHPixie\Route\Resolvers\Resolver\Group\Implementation',
         'mount'  => '\PHPixie\Route\Resolvers\Resolver\Mount',
         'pattern' => '\PHPixie\Route\Resolvers\Resolver\Pattern\Implementation',
         'prefix'  => '\PHPixie\Route\Resolvers\Resolver\Pattern\Prefix'
@@ -118,22 +118,6 @@ class ResolversTest extends \PHPixie\Test\Testcase
         $builder = $this->resolvers->builder();
         $this->assertInstance($builder, '\PHPixie\Route\Resolvers\Builder', array(
             'resolverRegistry' => null
-        ));
-    }
-    
-    /**
-     * @covers ::configRegistry
-     * @covers ::<protected>
-     */
-    public function testConfigRegistry()
-    {
-        $resolverBuilder = $this->getRouteBuilder();
-        $configData   = $this->getSliceData();
-        
-        $resolverRegistry = $this->resolvers->configRegistry($resolverBuilder, $configData);
-        $this->assertInstance($resolverRegistry, '\PHPixie\Route\Resolvers\Registry\Config', array(
-            'resolverBuilder' => $resolverBuilder,
-            'configData'   => $configData
         ));
     }
     

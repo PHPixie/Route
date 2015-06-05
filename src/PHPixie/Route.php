@@ -23,13 +23,6 @@ class Route
         return $builder->buildFromConfig($configData);
     }
     
-    public function configResolverRegistry($configData, $resolverRegistry = null)
-    {
-        $resolvers  = $this->builder->resolvers();
-        $builder = $resolvers->builder($resolverRegistry);
-        return $resolvers->configRegistry($builder, $configData);
-    }
-    
     public function builder()
     {
         return $this->builder;

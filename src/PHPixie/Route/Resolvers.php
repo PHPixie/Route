@@ -15,7 +15,7 @@ class Resolvers
     
     public function group($resolverBuilder, $configData)
     {
-        return new Resolvers\Resolver\Group(
+        return new Resolvers\Resolver\Group\Implementation(
             $resolverBuilder,
             $configData
         );
@@ -51,14 +51,6 @@ class Resolvers
         return new Resolvers\Builder(
             $this,
             $resolverRegistry
-        );
-    }
-    
-    public function configRegistry($resolverBuilder, $configData)
-    {
-        return new Resolvers\Registry\Config(
-            $resolverBuilder,
-            $configData
         );
     }
 }

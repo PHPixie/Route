@@ -1,11 +1,11 @@
 <?php
 
-namespace PHPixie\Tests\Route\Resolvers\Resolver;
+namespace PHPixie\Tests\Route\Resolvers\Resolver\Group;
 
 /**
- * @coversDefaultClass \PHPixie\Route\Resolvers\Resolver\Group
+ * @coversDefaultClass \PHPixie\Route\Resolvers\Resolver\Group\Implementation
  */
-class GroupTest extends \PHPixie\Test\Testcase
+class ImplementationTest extends \PHPixie\Test\Testcase
 {
     protected $resolverBuilder;
     protected $configData;
@@ -19,7 +19,7 @@ class GroupTest extends \PHPixie\Test\Testcase
         $this->resolverBuilder = $this->quickMock('\PHPixie\Route\Resolvers\Builder');
         $this->configData   = $this->getSliceData();
         
-        $this->group = new \PHPixie\Route\Resolvers\Resolver\Group(
+        $this->group = new \PHPixie\Route\Resolvers\Resolver\Group\Implementation(
             $this->resolverBuilder,
             $this->configData
         );
