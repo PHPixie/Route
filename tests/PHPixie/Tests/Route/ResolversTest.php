@@ -13,8 +13,8 @@ class ResolversTest extends \PHPixie\Test\Testcase
     protected $resolvers;
     
     protected $classMap = array(
-        'group'   => '\PHPixie\Route\Resolvers\Resolver\Group\Implementation',
-        'mount'  => '\PHPixie\Route\Resolvers\Resolver\Mount',
+        'group'   => '\PHPixie\Route\Resolvers\Resolver\Group',
+        'mount'   => '\PHPixie\Route\Resolvers\Resolver\Mount',
         'pattern' => '\PHPixie\Route\Resolvers\Resolver\Pattern\Implementation',
         'prefix'  => '\PHPixie\Route\Resolvers\Resolver\Pattern\Prefix'
     );

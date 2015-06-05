@@ -15,7 +15,7 @@ class Resolvers
     
     public function group($resolverBuilder, $configData)
     {
-        return new Resolvers\Resolver\Group\Implementation(
+        return new Resolvers\Resolver\Group(
             $resolverBuilder,
             $configData
         );
