@@ -7,19 +7,19 @@ namespace PHPixie\Tests\Route\Translator;
  */
 class MatchTest extends \PHPixie\Test\Testcase
 {
-    protected $resolverPath = 'pixie.trixie.stella';
     protected $attributes = array(
         'a' => 1,
         'b' => 2
     );
+    protected $resolverPath = 'pixie.trixie.stella';
     
     protected $match;
     
     public function setUp()
     {
         $this->match = new \PHPixie\Route\Translator\Match(
-            $this->resolverPath,
-            $this->attributes
+            $this->attributes,
+            $this->resolverPath
         );
     }
     
@@ -79,6 +79,10 @@ class MatchTest extends \PHPixie\Test\Testcase
     {
         $this->match->prependResolverPath('fairy');
         $this->assertSame('fairy.'.$this->resolverPath, $this->match->resolverPath());
+        
+        $this->match = new \PHPixie\Route\Translator\Match();
+        $this->match->prependResolverPath('fairy');
+        $this->assertSame('fairy', $this->match->resolverPath());
     }
     
     /**

@@ -45,16 +45,16 @@ class BuilderTest extends \PHPixie\Test\Testcase
     {
         $attributes = array('t' => 1);
         
-        $match = $this->builder->translatorMatch('pixie', $attributes);
+        $match = $this->builder->translatorMatch($attributes, 'pixie');
         $this->assertInstance($match, '\PHPixie\Route\Translator\Match', array(
-            'resolverPath'  => 'pixie',
-            'attributes' => $attributes
+            'attributes' => $attributes,
+            'resolverPath'  => 'pixie'
         ));
         
         $match = $this->builder->translatorMatch();
         $this->assertInstance($match, '\PHPixie\Route\Translator\Match', array(
-            'resolverPath'  => null,
-            'attributes' => array()
+            'attributes'   => array(),
+            'resolverPath' => null
         ));
     }
     

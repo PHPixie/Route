@@ -7,10 +7,10 @@ class Match
     protected $resolverPath;
     protected $attributes;
     
-    public function __construct($resolverPath = null, $attributes = array())
+    public function __construct($attributes = array(), $resolverPath = null)
     {
-        $this->resolverPath  = $resolverPath;
         $this->attributes = $attributes;
+        $this->resolverPath  = $resolverPath;
     }
     
     public function resolverPath()
@@ -41,7 +41,11 @@ class Match
     
     public function prependResolverPath($resolverPath)
     {
-        $this->resolverPath = $resolverPath.'.'.$this->resolverPath;
+        if($this->resolverPath !== null) {
+            $this->resolverPath = $resolverPath.'.'.$this->resolverPath;
+        }else{
+            $this->resolverPath = $resolverPath;
+        }
     }
     
     public function prependAttributes($attributes)

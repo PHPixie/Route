@@ -14,7 +14,7 @@ class Translator
     public function __construct($builder, $resolver, $configData, $httpContextContainer = null)
     {
         $this->builder              = $builder;
-        $this->resolver                = $resolver;
+        $this->resolver             = $resolver;
         $this->httpContextContainer = $httpContextContainer;
         
         $this->basePath = $configData->get('basePath', '/');
@@ -47,14 +47,14 @@ class Translator
         return $this->resolver->match($fragment);
     }
     
-    public function generatePath($resolverPath, $attributes = array())
+    public function generatePath($resolverPath = null, $attributes = array())
     {
         $fragment = $this->generateFragment($resolverPath, $attributes);
         return $this->basePath.$fragment->path();
     }
     
     public function generateUri(
-        $resolverPath,
+        $resolverPath  = null,
         $attributes    = array(),
         $withHost      = false,
         $serverRequest = null
@@ -78,8 +78,8 @@ class Translator
     protected function generateFragment($resolverPath, $attributes, $withHost = false, $serverRequest = null)
     {
         $match = $this->builder->translatorMatch(
-            $resolverPath,
-            $attributes
+            $attributes,
+            $resolverPath
         );
         
         return $this->resolver->generate($match, $withHost);

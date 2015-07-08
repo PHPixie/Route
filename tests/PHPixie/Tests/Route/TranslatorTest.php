@@ -19,7 +19,7 @@ class TranslatorTest extends \PHPixie\Test\Testcase
     public function setUp()
     {
         $this->builder              = $this->quickMock('\PHPixie\Route\Builder');
-        $this->resolver                = $this->quickMock('\PHPixie\Route\Resolvers\Resolver');
+        $this->resolver             = $this->quickMock('\PHPixie\Route\Resolvers\Resolver');
         $this->httpContextContainer = $this->quickMock('\PHPixie\HTTP\Context\Container');
         $configData                 = $this->prepareConfigData();
         
@@ -212,8 +212,8 @@ class TranslatorTest extends \PHPixie\Test\Testcase
     {
         $match = $this->getMatch();
         $this->method($this->builder, 'translatorMatch', $match, array(
-            $resolverPath,
-            $attributes
+            $attributes,
+            $resolverPath
         ), 0);
         
         $fragment = $this->getFragment();

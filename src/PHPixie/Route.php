@@ -11,9 +11,9 @@ class Route
         $this->builder = $this->buildBuilder();
     }
     
-    public function translator($configData, $resolver, $httpContextContainer = null)
+    public function translator($resolver, $configData, $httpContextContainer = null)
     {
-        return $this->builder->translator($configData, $resolver, $httpContextContainer);
+        return $this->builder->translator($resolver, $configData, $httpContextContainer);
     }
     
     public function buildResolver($configData, $resolverRegistry = null)

@@ -6,7 +6,7 @@ class Group implements \PHPixie\Route\Resolvers\Resolver,
                        \PHPixie\Route\Resolvers\Registry
 {
     protected $resolverBuilder;
-    protected $configData;
+    protected $resolversConfig;
     
     protected $names;
     protected $resolverMap;
@@ -14,7 +14,7 @@ class Group implements \PHPixie\Route\Resolvers\Resolver,
     public function __construct($resolverBuilder, $configData)
     {
         $this->resolverBuilder = $resolverBuilder;
-        $this->configData   = $configData;
+        $this->resolversConfig = $configData->slice('resolvers');
     }
     
     public function names()
@@ -27,12 +27,13 @@ class Group implements \PHPixie\Route\Resolvers\Resolver,
     {
         $this->requireRouteNames();
         
+
         if(!array_key_exists($name, $this->resolverMap)) {
             throw new \PHPixie\Route\Exception\Route();
         }
         
         if($this->resolverMap[$name] === null) {
-            $configData = $this->configData->slice($name);
+            $configData = $this->resolversConfig->slice($name);
             $this->resolverMap[$name] = $this->resolverBuilder->buildFromConfig($configData);
         }
         
@@ -65,7 +66,7 @@ class Group implements \PHPixie\Route\Resolvers\Resolver,
     protected function requireRouteNames()
     {
         if($this->names === null) {
-            $this->names    = $this->configData->keys();
+            $this->names = $this->resolversConfig->keys();
             $this->resolverMap = array_fill_keys($this->names, null);
         }
     }

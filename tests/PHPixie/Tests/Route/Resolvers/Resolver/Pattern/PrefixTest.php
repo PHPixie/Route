@@ -62,16 +62,16 @@ class PrefixTest extends \PHPixie\Tests\Route\Resolvers\Resolver\PatternTest
         $methodValid = null,
         $hostValid = null,
         $pathValid = null,
-        $groupValid = false
+        $resolverValid = false
     )
     {
-        $this->resolver = $this->resolverMock(array('group'));
+        $this->resolver = $this->resolverMock(array('resolver'));
         $fragment = $this->getFragment();
-        $match = $this->prepareMatchTest($fragment, $methodValid, $hostValid, $pathValid, $groupValid);
+        $match = $this->prepareMatchTest($fragment, $methodValid, $hostValid, $pathValid, $resolverValid);
         $this->assertSame($match, $this->resolver->match($fragment));
     }
     
-    protected function prepareMatchTest($fragment, $methodValid, $hostValid, $pathValid, $groupValid)
+    protected function prepareMatchTest($fragment, $methodValid, $hostValid, $pathValid, $resolverValid)
     {
         $builderAt  = 0;
         $configAt   = 0;
@@ -121,13 +121,13 @@ class PrefixTest extends \PHPixie\Tests\Route\Resolvers\Resolver\PatternTest
         $subFragment = $this->getFragment();
         $this->method($fragment, 'copy', $subFragment, array($path, $host), $fragmentAt++);
         
-        $group = $this->getRoute();
-        $this->method($this->resolver, 'group', $group, array());
+        $resolver = $this->getRoute();
+        $this->method($this->resolver, 'resolver', $resolver, array());
         
-        $match = $groupValid ? $this->getMatch() : null;
-        $this->method($group, 'match', $match, array($subFragment), 0);
+        $match = $resolverValid ? $this->getMatch() : null;
+        $this->method($resolver, 'match', $match, array($subFragment), 0);
         
-        if($groupValid) {
+        if($resolverValid) {
             $this->method($match, 'prependAttributes', null, array($attributes), 0);
         }
         
@@ -166,18 +166,18 @@ class PrefixTest extends \PHPixie\Tests\Route\Resolvers\Resolver\PatternTest
     
     protected function generateTest($withHost = false, $pathExists = false, $hostExists = false)
     {
-        $this->resolver = $this->resolverMock(array('group'));
+        $this->resolver = $this->resolverMock(array('resolver'));
         $match = $this->getMatch();
         
         $builderAt  = 0;
         $configAt   = 0;
         $fragmentAt = 0;
         
-        $group = $this->getRoute();
-        $this->method($this->resolver, 'group', $group, array());
+        $resolver = $this->getRoute();
+        $this->method($this->resolver, 'resolver', $resolver, array());
         
         $fragment = $this->getFragment();
-        $this->method($group, 'generate', $fragment, array($match, $withHost), 0);
+        $this->method($resolver, 'generate', $fragment, array($match, $withHost), 0);
         
         $attributes = array('a' => 2);
         $mergedAttributes = $this->prepareMergeAttributes($match, $attributes, $configAt);

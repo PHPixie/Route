@@ -38,6 +38,8 @@ class Matcher
     
     protected function mapParameters($pattern, $matches)
     {
-        return array_combine($pattern->parameterNames(), $matches);
+        $names = $pattern->parameterNames();
+        $names = array_slice($names, 0, count($matches));
+        return array_combine($names, $matches);
     }
 }

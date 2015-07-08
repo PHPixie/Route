@@ -6,12 +6,12 @@ class Builder
 {
     protected $instances = array();
     
-    public function translator($configData, $resolver, $httpContextContainer = null)
+    public function translator($resolver, $configData, $httpContextContainer = null)
     {
         return new Translator(
             $this,
-            $configData,
             $resolver,
+            $configData,
             $httpContextContainer
         );
     }
@@ -25,11 +25,11 @@ class Builder
         );
     }
     
-    public function translatorMatch($path = null, $attributes = array())
+    public function translatorMatch($attributes = array(), $path = null)
     {
         return new Translator\Match(
-            $path,
-            $attributes
+            $attributes,
+            $path
         );
     }
     

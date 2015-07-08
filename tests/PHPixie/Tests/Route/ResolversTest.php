@@ -48,10 +48,13 @@ class ResolversTest extends \PHPixie\Test\Testcase
         $configData   = $this->getSliceData();
         $resolverBuilder = $this->getRouteBuilder();
         
+        $resolversConfig = $this->getSliceData();
+        $this->method($configData, 'slice', $resolversConfig, array('resolvers'), 0);
+        
         $group = $this->resolvers->group($resolverBuilder, $configData);
         $this->assertInstance($group, $this->classMap['group'], array(
             'resolverBuilder' => $resolverBuilder,
-            'configData'   => $configData
+            'resolversConfig' => $resolversConfig
         ));
     }
     

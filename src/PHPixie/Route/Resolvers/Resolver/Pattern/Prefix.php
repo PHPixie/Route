@@ -45,7 +45,7 @@ class Prefix extends \PHPixie\Route\Resolvers\Resolver\Pattern
         
         $fragment = $fragment->copy($path, $host);
         
-        $match = $this->group()->match($fragment);
+        $match = $this->resolver()->match($fragment);
         if($match !== null) {
             $match->prependAttributes($attributes);
         }
@@ -64,7 +64,7 @@ class Prefix extends \PHPixie\Route\Resolvers\Resolver\Pattern
 
     public function generate($match, $withHost = false)
     {
-        $fragment   = $this->group()->generate($match, $withHost);
+        $fragment   = $this->resolver()->generate($match, $withHost);
         $attributes = $this->mergeAttributes($match);
         
         $path = $this->generatePatternString($this->pathPattern(), $attributes);

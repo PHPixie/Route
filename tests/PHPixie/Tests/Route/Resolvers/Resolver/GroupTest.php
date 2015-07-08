@@ -8,7 +8,7 @@ namespace PHPixie\Tests\Route\Resolvers\Resolver;
 class GroupTest extends \PHPixie\Test\Testcase
 {
     protected $resolverBuilder;
-    protected $configData;
+    protected $resolversConfig;
     
     protected $group;
     
@@ -17,11 +17,14 @@ class GroupTest extends \PHPixie\Test\Testcase
     public function setUp()
     {
         $this->resolverBuilder = $this->quickMock('\PHPixie\Route\Resolvers\Builder');
-        $this->configData   = $this->getSliceData();
+        $this->resolversConfig   = $this->getSliceData();
+        
+        $configData = $this->getSliceData();
+        $this->method($configData, 'slice', $this->resolversConfig, array('resolvers'), 0);
         
         $this->group = new \PHPixie\Route\Resolvers\Resolver\Group(
             $this->resolverBuilder,
-            $this->configData
+            $configData
         );
     }
     
@@ -148,13 +151,13 @@ class GroupTest extends \PHPixie\Test\Testcase
     
     protected function prepareResolverNames(&$configAt = 0)
     {
-        $this->method($this->configData, 'keys', $this->resolverNames, array(), $configAt++);
+        $this->method($this->resolversConfig, 'keys', $this->resolverNames, array(), $configAt++);
     }
     
     protected function prepareResolver($name, &$configAt = 0, &$resolversAt = 0)
     {
         $slice = $this->getSliceData();
-        $this->method($this->configData, 'slice', $slice, array($name), $configAt++);
+        $this->method($this->resolversConfig, 'slice', $slice, array($name), $configAt++);
         
         $resolver = $this->quickMock('\PHPixie\Route\Resolvers\Resolver');
         $this->method($this->resolverBuilder, 'buildFromConfig', $resolver, array($slice), $resolversAt++);

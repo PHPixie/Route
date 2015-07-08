@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "3f56f50d38ba32aa3f8eb4bcff4c62aa",
+    "hash": "70cb8ac3d03ca6d8ec380188296ccd8b",
     "packages": [
         {
             "name": "phpixie/http",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPixie/HTTP.git",
-                "reference": "5cd4db4d4e92df79f5670913f728fe49563500dd"
+                "reference": "b2696997b385eef9c2333a749e325e76d51bd970"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPixie/HTTP/zipball/5cd4db4d4e92df79f5670913f728fe49563500dd",
-                "reference": "5cd4db4d4e92df79f5670913f728fe49563500dd",
+                "url": "https://api.github.com/repos/PHPixie/HTTP/zipball/b2696997b385eef9c2333a749e325e76d51bd970",
+                "reference": "b2696997b385eef9c2333a749e325e76d51bd970",
                 "shasum": ""
             },
             "require": {
@@ -56,7 +56,7 @@
                 "http",
                 "psr-7"
             ],
-            "time": "2015-05-30 13:03:15"
+            "time": "2015-06-24 16:01:18"
         },
         {
             "name": "phpixie/slice",
