@@ -117,13 +117,6 @@ class BuilderTest extends \PHPixie\Test\Testcase
         $this->assertInstance($resolvers, '\PHPixie\Route\Resolvers', array(
             'builder'       => $this->builder
         ));
-        $this->assertSame($resolvers, $this->builder->resolvers());
-        
-        $this->builder = new \PHPixie\Route\Builder($this->configData);
-        $this->assertInstance($this->builder->resolvers(), '\PHPixie\Route\Resolvers', array(
-            'builder'       => $this->builder,
-            'resolverRegistry' => null,
-        ));
     }
     
     /**
