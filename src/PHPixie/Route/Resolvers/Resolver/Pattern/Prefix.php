@@ -43,7 +43,9 @@ class Prefix extends \PHPixie\Route\Resolvers\Resolver\Pattern
             $pathAttributes
         );
         
-        $fragment = $fragment->copy($path, $host);
+        $fragment = $fragment->copy();
+        $fragment->setPath($path);
+        $fragment->setHost($host);
         
         $match = $this->resolver()->match($fragment);
         if($match !== null) {

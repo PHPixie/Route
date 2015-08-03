@@ -92,7 +92,7 @@ class Translator
             return null;
         }
         
-        return substr($string, $length);
+        return (string) substr($string, $length);
     }
     
     protected function currentServerRequest()
