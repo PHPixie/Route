@@ -225,7 +225,11 @@ class TranslatorTest extends \PHPixie\Test\Testcase
     {
         $context = $this->quickMock('\PHPixie\HTTP\Context');
         $this->method($this->httpContextContainer, 'httpContext', $context, array(), 0);
-        $this->method($context, 'serverRequest', $serverRequest, array(), 0);
+        
+        $request = $this->quickMock('\PHPixie\HTTP\Request');
+        $this->method($context, 'request', $request, array(), 0);
+        
+        $this->method($request, 'serverRequest', $serverRequest, array(), 0);
     }
     
     protected function prepareConfigData()

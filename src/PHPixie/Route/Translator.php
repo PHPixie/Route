@@ -103,6 +103,6 @@ class Translator
         }
         
         $context = $this->httpContextContainer->httpContext();
-        return $context->serverRequest();
+        return $context->request()->serverRequest();
     }
 }

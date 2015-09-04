@@ -119,7 +119,10 @@ class PrefixTest extends \PHPixie\Tests\Route\Resolvers\Resolver\PatternTest
         $attributes = array_merge($defaults, $hostAttributes, $pathAttributes);
         
         $subFragment = $this->getFragment();
-        $this->method($fragment, 'copy', $subFragment, array($path, $host), $fragmentAt++);
+        $this->method($fragment, 'copy', $subFragment, array(), $fragmentAt++);
+        
+        $this->method($subFragment, 'setPath', null, array($path), 0);
+        $this->method($subFragment, 'setHost', null, array($host), 1);
         
         $resolver = $this->getRoute();
         $this->method($this->resolver, 'resolver', $resolver, array());
