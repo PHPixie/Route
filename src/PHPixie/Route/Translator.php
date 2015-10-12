@@ -33,7 +33,8 @@ class Translator
             return null;
         }
         
-        $path = $this->stripPrefix($uri->getPath(), $this->basePath);
+        $path = urldecode($uri->getPath());
+        $path = $this->stripPrefix($path, $this->basePath);
         if($path === null) {
             return null;
         }
