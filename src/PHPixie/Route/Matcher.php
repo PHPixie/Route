@@ -40,6 +40,9 @@ class Matcher
     {
         $names = $pattern->parameterNames();
         $names = array_slice($names, 0, count($matches));
+        if(empty($names)) {
+            return array();
+        }
         return array_combine($names, $matches);
     }
 }
