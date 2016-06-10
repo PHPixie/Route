@@ -91,6 +91,10 @@ class Translator
 
     protected function stripPrefix($string, $prefix)
     {
+        if(empty($prefix)) {
+            return $string;
+        }
+        
         $length = strlen($prefix);
         if(substr($string, 0, $length) !== $prefix) {
             return null;
