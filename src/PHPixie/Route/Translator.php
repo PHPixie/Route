@@ -85,6 +85,7 @@ class Translator
             $attributes,
             $resolverPath
         );
+
         return $this->resolver->generate($match, $withHost);
     }
 
