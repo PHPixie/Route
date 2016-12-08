@@ -4,6 +4,10 @@ namespace PHPixie\Route\Resolvers\Resolver;
 
 abstract class Pattern implements \PHPixie\Route\Resolvers\Resolver
 {
+    /**
+     *
+     * @var \PHPixie\Route\Builder 
+     */
     protected $builder;
     protected $configData;
     
@@ -13,17 +17,30 @@ abstract class Pattern implements \PHPixie\Route\Resolvers\Resolver
     protected $pathPattern;
     protected $methods;
     
+    /**
+     * 
+     * @param \PHPixie\Route\Builder $builder
+     * @param PHPixie\Slice\Type\Slice\Editable $configData
+     */
     public function __construct($builder, $configData)
     {
         $this->builder    = $builder;
         $this->configData = $configData;
     }
     
+    /**
+     * 
+     * @return \PHPixie\Route\Matcher\Pattern
+     */
     public function hostPattern()
     {
         return $this->pattern('host','.+?');
     }
     
+    /**
+     * 
+     * @return \PHPixie\Route\Matcher\Pattern
+     */
     public function pathPattern()
     {
         return $this->pattern('path','[^/]+?');
@@ -81,6 +98,12 @@ abstract class Pattern implements \PHPixie\Route\Resolvers\Resolver
         return in_array($method, $methods, true);
     }
     
+    /**
+     * 
+     * @param \PHPixie\Route\Matcher\Pattern $pattern
+     * @param array $attributes
+     * @return string
+     */
     protected function generatePatternString($pattern, $attributes)
     {
         if($pattern === null) {

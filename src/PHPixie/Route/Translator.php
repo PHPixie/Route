@@ -5,6 +5,10 @@ namespace PHPixie\Route;
 class Translator
 {
     protected $builder;
+    /**
+     *
+     * @var PHPixie\Route\Resolvers\Resolver
+     */
     protected $resolver;
     protected $httpContextContainer;
 
@@ -85,7 +89,7 @@ class Translator
             $attributes,
             $resolverPath
         );
-
+        
         return $this->resolver->generate($match, $withHost);
     }
 
