@@ -11,6 +11,12 @@ class Pattern
     protected $regex;
     protected $parameterNames = array();
     
+    /**
+     * 
+     * @param string $pattern
+     * @param string $defaultParameterPattern
+     * @param string $parameterPatterns
+     */
     public function __construct($pattern, $defaultParameterPattern = '.+?', $parameterPatterns = array())
     {
         $this->pattern                 = $pattern;
@@ -54,23 +60,40 @@ class Pattern
         }
     }
     
+    /**
+     * 
+     * @return string
+     */
     public function pattern()
     {
         return $this->pattern;
     }
     
+    /**
+     * 
+     * @return string
+     */
     public function regex()
     {
         $this->requireRegex();
         return $this->regex;
     }
     
+    /**
+     * 
+     * @return array
+     */
     public function parameterNames()
     {
         $this->requireRegex();
         return $this->parameterNames;
     }
     
+    /**
+     * 
+     * @param array $parameters
+     * @return string
+     */
     public function generate($parameters)
     {
         $search  = array();
@@ -79,14 +102,13 @@ class Pattern
             $search []= '<'.$key.'>';
             $replace[]= $value;
         }
-        
-        $remove = array('(', ')', '//');
+        $remove = array('(', ')');
         foreach($remove as $string) {
             $search[]= $string;
         }
         
         $string = str_replace($search, $replace, $this->pattern);
-        
-        return $string;
+        $string = preg_replace('/\/+/', '/', $string);   
+        return   $string;
     }
 }

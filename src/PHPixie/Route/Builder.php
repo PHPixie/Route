@@ -25,6 +25,12 @@ class Builder
         );
     }
     
+    /**
+     * 
+     * @param array $attributes
+     * @param string $path
+     * @return \PHPixie\Route\Translator\Match
+     */
     public function translatorMatch($attributes = array(), $path = null)
     {
         return new Translator\Match(

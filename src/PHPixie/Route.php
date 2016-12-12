@@ -4,6 +4,10 @@ namespace PHPixie;
 
 class Route
 {
+    /**
+     *
+     * @var Route\Builder 
+     */
     protected $builder;
     
     public function __construct()
@@ -23,6 +27,10 @@ class Route
         return $builder->buildFromConfig($configData);
     }
     
+    /**
+     * 
+     * @return Route\Builder 
+     */
     public function builder()
     {
         return $this->builder;
