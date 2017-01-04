@@ -7,6 +7,7 @@ class Group implements \PHPixie\Route\Resolvers\Resolver,
 {
     protected $resolverBuilder;
     protected $resolversConfig;
+    protected $defaults;
 
     protected $names;
     protected $resolverMap;
@@ -15,6 +16,7 @@ class Group implements \PHPixie\Route\Resolvers\Resolver,
     {
         $this->resolverBuilder = $resolverBuilder;
         $this->resolversConfig = $configData->slice('resolvers');
+        $this->defaults = $configData->get('defaults', array());
     }
 
     public function names()
@@ -49,6 +51,7 @@ class Group implements \PHPixie\Route\Resolvers\Resolver,
             $match = $resolver->match($segment);
             if($match !== null) {
                 $match->prependResolverPath($name);
+                $match->prependAttributes($this->defaults);
                 break;
             }
         }
@@ -59,6 +62,7 @@ class Group implements \PHPixie\Route\Resolvers\Resolver,
     public function generate($match, $withHost = false)
     {
         $name  = $match->popResolverPath();
+        $match->prependAttributes($this->defaults);
         $resolver = $this->get($name);
         return $resolver->generate($match, $withHost);
     }

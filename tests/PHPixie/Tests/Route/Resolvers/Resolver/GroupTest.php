@@ -9,6 +9,7 @@ class GroupTest extends \PHPixie\Test\Testcase
 {
     protected $resolverBuilder;
     protected $resolversConfig;
+    protected $defaults = array('processor' => 'test');
     
     protected $group;
     
@@ -21,6 +22,7 @@ class GroupTest extends \PHPixie\Test\Testcase
         
         $configData = $this->getSliceData();
         $this->method($configData, 'slice', $this->resolversConfig, array('resolvers'), 0);
+        $this->method($configData, 'get', $this->defaults, array('defaults', []), 1);
         
         $this->group = new \PHPixie\Route\Resolvers\Resolver\Group(
             $this->resolverBuilder,
@@ -95,6 +97,7 @@ class GroupTest extends \PHPixie\Test\Testcase
         }
         
         $this->method($match, 'prependResolverPath', null, array($this->resolverNames[1]), 0);
+        $this->method($match, 'prependAttributes', null, array($this->defaults), 1);
         
         $this->assertSame($match, $this->group->match($fragment));
     }
@@ -139,6 +142,7 @@ class GroupTest extends \PHPixie\Test\Testcase
         $fragment = $this->getFragment();
         
         $this->method($match, 'popResolverPath', $resolverName, array(), 0);
+        $this->method($match, 'prependAttributes', null, array($this->defaults), 1);
         
         $params = array($match);
         if($withHost) {
