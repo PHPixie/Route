@@ -7,6 +7,11 @@ class Builder
     protected $resolvers;
     protected $resolverRegistry;
     
+    /**
+     * 
+     * @param \PHPixie\Route\Resolvers $resolvers
+     * @param type $resolverRegistry
+     */
     public function __construct($resolvers, $resolverRegistry = null)
     {
         $this->resolvers        = $resolvers;
@@ -37,6 +42,11 @@ class Builder
         return $this->resolvers->mount($this->resolverRegistry, $configData);
     }
     
+    /**
+     * 
+     * @param \PHPixie\Slice\Data $configData
+     * @return Resolver
+     */
     public function buildFromConfig($configData) {
         $type = $configData->get('type', 'pattern');
         return $this->$type($configData);
