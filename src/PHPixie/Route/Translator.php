@@ -38,7 +38,7 @@ class Translator
 
     /**
      * 
-     * @param \Psr\Http\Message\ServerRequestInterface $serverRequest
+     * @param \PHPixie\HTTP\Messages\Message\Request\ServerRequest $serverRequest
      * @return Translator\Match
      */
     public function match($serverRequest = null)
@@ -85,7 +85,7 @@ class Translator
      * @param string $resolverPath
      * @param array $attributes
      * @param boolean $withHost
-     * @param \Psr\Http\Message\ServerRequestInterface $serverRequest
+     * @param \PHPixie\HTTP\Messages\Message\Request\ServerRequest $serverRequest
      * @return string
      */
     public function generateUri(

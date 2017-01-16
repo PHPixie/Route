@@ -57,7 +57,7 @@ class Builder
      * 
      * @param string $path
      * @param string $host
-     * @param \Psr\Http\Message\ServerRequestInterface $serverRequest
+     * @param \PHPixie\HTTP\Messages\Message\Request\ServerRequest $serverRequest
      * @return \PHPixie\Route\Translator\Fragment
      */
     public function translatorFragment($path = null, $host = null, $serverRequest = null)

@@ -8,7 +8,7 @@ class Fragment
     protected $host;
     /**
      *
-     * @var \Psr\Http\Message\ServerRequestInterface
+     * @var \PHPixie\HTTP\Messages\Message\Request\ServerRequest
      */
     protected $serverRequest;
     
@@ -16,7 +16,7 @@ class Fragment
      * 
      * @param string $path
      * @param string $host
-     * @param \Psr\Http\Message\ServerRequestInterface $serverRequest
+     * @param \PHPixie\HTTP\Messages\Message\Request\ServerRequest $serverRequest
      */
     public function __construct($path = null, $host = null, $serverRequest = null)
     {

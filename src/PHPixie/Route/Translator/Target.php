@@ -41,7 +41,7 @@ class Target
      * 
      * @param array $attributes
      * @param boolean $withHost
-     * @param \Psr\Http\Message\ServerRequestInterface $serverRequest
+     * @param \PHPixie\HTTP\Messages\Message\Request\ServerRequest $serverRequest
      * @return string
      */
     public function uri($attributes = array(), $withHost = false, $serverRequest = null)
