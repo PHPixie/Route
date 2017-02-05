@@ -4,6 +4,11 @@ namespace PHPixie\Route\Resolvers\Resolver\Pattern;
 
 class Implementation extends \PHPixie\Route\Resolvers\Resolver\Pattern
 {
+    /**
+     * 
+     * @param \PHPixie\Route\Translator\Fragment $fragment
+     * @return \PHPixie\Route\Translator\Match
+     */
     public function match($fragment)
     {
         if(!$this->isMethodValid($fragment)) {
@@ -45,6 +50,12 @@ class Implementation extends \PHPixie\Route\Resolvers\Resolver\Pattern
         return $this->builder->matcher()->match($pattern, $string);
     }
     
+    /**
+     * 
+     * @param \PHPixie\Route\Translator\Match $match
+     * @param boolean $withHost
+     * @return \PHPixie\Route\Translator\Fragment
+     */
     public function generate($match, $withHost = false)
     {
         $attributes = $this->mergeAttributes($match);

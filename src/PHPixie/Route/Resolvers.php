@@ -46,6 +46,11 @@ class Resolvers
         );
     }
     
+    /**
+     * 
+     * @param Resolvers\Registry $resolverRegistry
+     * @return Resolvers\Builder
+     */
     public function builder($resolverRegistry = null)
     {
         return new Resolvers\Builder(

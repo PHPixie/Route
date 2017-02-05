@@ -4,10 +4,14 @@ namespace PHPixie\Route;
 
 class Translator
 {
+    /**
+     *
+     * @var Builder 
+     */
     protected $builder;
     /**
      *
-     * @var PHPixie\Route\Resolvers\Resolver
+     * @var Resolvers\Resolver
      */
     protected $resolver;
     protected $httpContextContainer;
@@ -15,6 +19,13 @@ class Translator
     protected $basePath;
     protected $baseHost;
 
+    /**
+     * 
+     * @param Builder $builder
+     * @param Resolvers\Resolver $resolver
+     * @param \PHPixie\Slice\Data $configData
+     * @param \PHPixie\HTTP\Context\Container $httpContextContainer
+     */
     public function __construct($builder, $resolver, $configData, $httpContextContainer = null)
     {
         $this->builder              = $builder;
@@ -25,6 +36,11 @@ class Translator
         $this->baseHost = $configData->get('baseHost', '');
     }
 
+    /**
+     * 
+     * @param \PHPixie\HTTP\Messages\Message\Request\ServerRequest $serverRequest
+     * @return Translator\Match
+     */
     public function match($serverRequest = null)
     {
         if($serverRequest === null) {
@@ -52,12 +68,26 @@ class Translator
         return $this->resolver->match($fragment);
     }
 
+    /**
+     * 
+     * @param string $resolverPath
+     * @param array $attributes
+     * @return string
+     */
     public function generatePath($resolverPath = null, $attributes = array())
     {
         $fragment = $this->generateFragment($resolverPath, $attributes);
         return $this->basePath.$fragment->path();
     }
 
+    /**
+     * 
+     * @param string $resolverPath
+     * @param array $attributes
+     * @param boolean $withHost
+     * @param \PHPixie\HTTP\Messages\Message\Request\ServerRequest $serverRequest
+     * @return string
+     */
     public function generateUri(
         $resolverPath  = null,
         $attributes    = array(),

@@ -6,6 +6,13 @@ class Builder
 {
     protected $instances = array();
     
+    /**
+     * 
+     * @param Resolvers\Resolver $resolver
+     * @param \PHPixie\Slice\Data $configData
+     * @param \PHPixie\HTTP\Context\Container $httpContextContainer
+     * @return \PHPixie\Route\Translator
+     */
     public function translator($resolver, $configData, $httpContextContainer = null)
     {
         return new Translator(
@@ -16,6 +23,13 @@ class Builder
         );
     }
     
+    /**
+     * 
+     * @param string $pattern
+     * @param string $defaultParameterPattern
+     * @param string $parameterPatterns
+     * @return \PHPixie\Route\Matcher\Pattern
+     */
     public function matcherPattern($pattern, $defaultParameterPattern = '.+?', $parameterPatterns = array())
     {
         return new Matcher\Pattern(
@@ -39,6 +53,13 @@ class Builder
         );
     }
     
+    /**
+     * 
+     * @param string $path
+     * @param string $host
+     * @param \PHPixie\HTTP\Messages\Message\Request\ServerRequest $serverRequest
+     * @return \PHPixie\Route\Translator\Fragment
+     */
     public function translatorFragment($path = null, $host = null, $serverRequest = null)
     {
         return new Translator\Fragment(
@@ -48,6 +69,12 @@ class Builder
         );
     }
     
+    /**
+     * 
+     * @param Translator $translator
+     * @param string $resolverPath
+     * @return \PHPixie\Route\Translator\Target
+     */
     public function translatorTarget($translator, $resolverPath)
     {
         return new Translator\Target(
@@ -56,11 +83,19 @@ class Builder
         );
     }
     
+    /**
+     * 
+     * @return Matcher
+     */
     public function matcher()
     {
         return $this->instance('matcher');
     }
     
+    /**
+     * 
+     * @return Resolvers
+     */
     public function resolvers()
     {
         return $this->instance('resolvers');
