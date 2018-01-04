@@ -4,11 +4,6 @@ namespace PHPixie\Route;
 
 class RouteConfig
 {
-    public static function config()
-    {
-        return new Config\Root();
-    }
-
     public static function translator()
     {
         return new Config\Translator();
